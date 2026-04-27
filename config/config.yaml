@@ -1,0 +1,35 @@
+project:
+  name: model_supermarket
+  description: Painel interativo para análise de notas fiscais de supermercado
+  version: 1.0
+  author: Renan Douglas Floriano Scavazzini
+
+data:
+  raw_invoice_path: data/notas_fiscais.csv
+  output_dir: results/
+  date_column: data_hora
+  invoice_id_column: nota_fiscal_id
+  store_column: supermercado
+  product_code_column: codigo_produto
+  product_name_column: produto
+  quantity_column: quantidade
+  unit_price_column: preco_unitario
+  total_price_column: preco_total
+
+dashboard:
+  title: Painel de Análise de Notas Fiscais de Supermercado
+  default_store: Todos
+  period_labels:
+    morning: Manhã
+    afternoon: Tarde
+    night: Noite
+analysis:
+  period_thresholds:
+    morning: [0, 12]
+    afternoon: [12, 18]
+    night: [18, 24]
+models:
+  high_spend_quantile: 0.75
+  regression:
+    test_size: 0.2
+    random_state: 42

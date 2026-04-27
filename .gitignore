@@ -1,2 +1,22 @@
 *qrcodes.txt
 *de_para_nfce.xlsx
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+.env
+
+# Streamlit
+*.db
+
+# IDEs
+.vscode/
+.idea/
