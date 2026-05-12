@@ -1,0 +1,12 @@
+paths:
+  data: data/notas_fiscais_supermercado.xlsx
+
+columns:
+  date: DATA
+  total_value: VALOR_TOTAL_PRODUTO
+  supermarket: SUPERMERCADO
+  product: PRODUTO
+  category: CAT_PRODUTO
+
+dashboard:
+  title: Model Supermarket

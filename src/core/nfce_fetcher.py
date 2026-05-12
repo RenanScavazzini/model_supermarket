@@ -231,6 +231,7 @@ def process_base(
 
     Versão:
         1.0 - 05/05/2026
+        1.1 - 11/05/2026 - Adição de padronização do nome dos produtos (associar maior código ao nome mais recente)
 
     Copyright:
         Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -341,6 +342,15 @@ def process_base(
     }
     df["UNIDADE"] = df["UNIDADE"].str.upper().map(map_unidades)
     print("✅ Unidades padronizadas:", df["UNIDADE"].nunique())
+    # 🔹 Padronização do nome dos produtos (associar maior código ao nome mais recente)
+    maior_codigo_produto = df.groupby("PRODUTO")["COD_PRODUTO"].max()
+    df["COD_PRODUTO"] = df["PRODUTO"].map(maior_codigo_produto)
+    produto_mais_recente = (
+        df.drop_duplicates(subset="COD_PRODUTO", keep="last")
+        .set_index("COD_PRODUTO")["PRODUTO"]
+    )
+    df["PRODUTO"] = df["COD_PRODUTO"].map(produto_mais_recente)
+    print("✅ Nome dos produtos padronizados")
     # 🔹 Ordem final das colunas
     colunas_finais = [
         'CHAVE_ANONIMIZADA',

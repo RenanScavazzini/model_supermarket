@@ -1,30 +1,80 @@
-# Arquitetura do Projeto model_supermarket
+# Arquitetura do Projeto `model_supermarket`
 
-Este projeto adota uma arquitetura modular inspirada no framework do `model_car`.
+## Visão Geral
 
-## Estrutura principal
+O projeto `model_supermarket` adota uma arquitetura modular orientada a análise de dados, engenharia analítica e visualização interativa, seguindo princípios de separação de responsabilidades, reutilização de componentes e escalabilidade.
 
-- `config/` : Configurações YAML para caminhos, colunas e modelo.
-- `src/core/` : Funções de infraestrutura, como carregamento de configuração e logging.
-- `src/analysis/` : Processamento de notas fiscais, agregação de métricas e modelos estatísticos.
-- `src/dashboard/` : Aplicação interativa de dashboard em Streamlit.
-- `notebooks/` : Notebooks de exploração de dados e demonstração.
+A estrutura foi desenvolvida para suportar:
 
-## Fluxo de dados
+- ingestão e tratamento de notas fiscais NFC-e
+- exploração analítica e estatística
+- geração de métricas e agregações
+- visualização interativa via dashboard
+- futura expansão para modelos de Machine Learning
+- deploy web utilizando Streamlit Cloud
 
-1. Carregar notas fiscais raw a partir de `data/notas_fiscais.csv` ou outro arquivo.
-2. Normalizar colunas essenciais e garantir campos de tempo.
-3. Calcular métricas de gasto total, médio, máximos e agregações por período, supermercado e produto.
-4. Aplicar modelos estatísticos:
-   - Naive Bayes para classificação de notas de alto gasto.
-   - Regressão para previsão de valor total.
-   - KMeans para clusterização de notas fiscais.
-5. Exibir resultados em um painel interativo com gráficos e métricas.
+---
 
-## Componentes principais
+## Estrutura do Projeto
 
-- `ConfigLoader` : gerencia a configuração YAML e permite leitura por chave pontuada.
-- `InvoiceLoader` : carrega e prepara registros de nota fiscal para análise.
-- `SummaryAnalyzer` : gera indicadores essenciais e tabelas de agregação.
-- `StatisticalModels` : treina e avalia modelos baseados em comportamento de gasto.
-- `Streamlit app` : painel interativo para explorar os principais relatórios e modelos.
+```text
+model_supermarket/
+│
+├── config/
+│   └── settings.yaml
+│
+├── data/
+│   └── notas_fiscais_supermercado.xlsx
+│
+├── logs/
+│   └── app.log
+│
+├── notebooks/
+│   ├── 01_dados.ipynb
+│   └── 02_eda.ipynb
+│
+├── src/
+│
+│   ├── core/
+│   │   ├── config_loader.py
+│   │   ├── logger.py
+|   |   ├── nfce_fetcher.py
+|   |   ├── paths.py
+│   │   └── tictoc.py
+│
+│   ├── analysis/
+│   │   ├── invoice_loader.py
+│   │   ├── summary_analyzer.py
+│   │   ├── product_analyzer.py
+│   │   ├── temporal_analyzer.py
+│   │   └── statistical_models.py
+│
+│   ├── dashboard/
+│   │   ├── app.py
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── overview.py
+│   │   │   ├── products.py
+│   │   │   ├── temporal.py
+│   │   │   └── supermarkets.py
+│   │   │
+│   │   ├── components/
+│   │   │   ├── filters.py
+│   │   │   ├── metrics.py
+│   │   │   └── charts.py
+│   │   │
+│   │   └── assets/
+│   │       └── logo.png
+│
+│   └── utils/
+│       ├── helpers.py
+│       └── constants.py
+│
+├── requirements.txt
+├── requirements-dev.txt
+├── ARCHITECTURE.md
+├── README.md
+├── ROADMAP.md
+│
+└── .streamlit/
+    └── config.toml

@@ -1,29 +1,104 @@
 # ROADMAP - model_supermarket
 
-## Fase 1: Painel Básico e Métricas Principais
+## Versão Atual
 
-- Carregar e normalizar dados de notas fiscais.
-- Calcular totais gerais, por supermercado, por produto e por período do dia.
-- Exibir métricas principais em painel interativo.
-- Estruturar configuração em YAML.
+### v1.0
 
-## Fase 2: Modelos Estatísticos
+- arquitetura modular inicial
+- dashboard Streamlit
+- análise temporal
+- análise de produtos
+- métricas consolidadas
+- normalização de dados
+- logging centralizado
+- configuração via YAML
 
-- Treinar Naive Bayes para classificar notas de alto gasto.
-- Treinar regressão para prever valor total da nota.
-- Adicionar clusterização KMeans para segmentar notas fiscais.
-- Gerar tabelas de coocorrência de produtos com frequência de compra conjunta.
+---
 
-## Fase 3: Expansão do Painel
+# Fase 1 — Consolidação Analítica
 
-- Adicionar análise temporal detalhada por dia, mês e ano.
-- Suportar filtros interativos por supermercado, produto e período.
-- Incluir previsões e recomendações no painel.
-- Criar relatórios exportáveis em CSV ou PDF.
+## Objetivos
 
-## Fase 4: Produção e Escalabilidade
+- melhorar filtros globais
+- otimizar visualizações
+- expandir análises descritivas
+- melhorar responsividade mobile
 
-- Suportar múltiplos arquivos de input e ingestão incremental.
-- Adicionar banco de dados leve para histórico de notas fiscais.
-- Construir API para consulta de métricas e modelos.
-- Containerizar com Docker para implantação.
+## Funcionalidades
+
+- filtros avançados
+- análise por categoria
+- dashboards comparativos
+- exportação CSV
+- exportação Excel
+- análise de sazonalidade
+
+---
+
+# Fase 2 — Modelos Estatísticos
+
+## Objetivos
+
+Adicionar modelos analíticos e preditivos.
+
+## Funcionalidades
+
+- regressão de gastos
+- classificação de compras
+- clusterização de consumidores
+- detecção de padrões de compra
+- recomendação de produtos
+
+---
+
+# Fase 3 — Engenharia de Dados
+
+## Objetivos
+
+Expandir pipeline de dados.
+
+## Funcionalidades
+
+- ingestão incremental
+- múltiplos arquivos
+- pipeline automatizado
+- validação de schema
+- armazenamento histórico
+- banco de dados
+
+---
+
+# Fase 4 — Deploy e Escalabilidade
+
+## Objetivos
+
+Preparar projeto para produção.
+
+## Funcionalidades
+
+- deploy cloud
+- Docker
+- API REST
+- autenticação
+- monitoramento
+- observabilidade
+- CI/CD
+
+---
+
+# Fase 5 — Inteligência Analítica
+
+## Objetivos
+
+Adicionar inteligência analítica avançada.
+
+## Funcionalidades
+
+- previsão de inflação pessoal
+- previsão de gastos futuros
+- análise de comportamento
+- análise sazonal avançada
+- NLP para produtos
+- OCR de NFC-e
+
+---

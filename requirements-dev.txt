@@ -1,0 +1,6 @@
+-r requirements.txt
+
+nfceget>=0.1
+jupyter
+notebook
+ipykernel

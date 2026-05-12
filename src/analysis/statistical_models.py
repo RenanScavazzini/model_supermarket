@@ -1,238 +1,147 @@
 """
 Descrição:
-    Módulo responsável pela construção de modelos estatísticos e de machine learning
-    aplicados a dados de notas fiscais de supermercado. Inclui modelos de classificação,
-    regressão, clusterização e análise de associação de produtos.
+    Módulo responsável pela implementação de modelos estatísticos
+    e algoritmos de Machine Learning aplicados à análise de consumo
+    em notas fiscais de supermercados.
 
 Autor:
     Renan Douglas Floriano Scavazzini
     Email: renanscavazzini@gmail.com
 
 Versão:
-    1.0 - 29/04/2026
+    1.0 - 12/05/2026
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
 """
 
-from dataclasses import dataclass
-from typing import Dict, Optional
 import pandas as pd
-import numpy as np
-from sklearn.naive_bayes import CategoricalNB
-from sklearn.ensemble import RandomForestRegressor
+
 from sklearn.cluster import KMeans
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, mean_squared_error
+from sklearn.linear_model import LinearRegression
+from sklearn.naive_bayes import GaussianNB
 
-
-@dataclass
-class ModelResult:
-    """
-    Descrição:
-        Estrutura de dados para armazenar o resultado de modelos estatísticos ou de
-        machine learning, incluindo nome, descrição, métricas de avaliação e o
-        objeto do modelo treinado.
-
-    Autor:
-        Renan Douglas Floriano Scavazzini
-        Email: renanscavazzini@gmail.com
-
-    Versão:
-        1.0 - 29/04/2026
-
-    Copyright:
-        Copyright (c) 2026 Renan Douglas Floriano Scavazzini
-    """
-    nome: str
-    descricao: str
-    metrics: Dict[str, float]
-    modelo: Optional[object] = None
+from src.core.logger import setup_logger
 
 
 class StatisticalModels:
     """
     Descrição:
-        Classe responsável pela construção e treinamento de modelos estatísticos e
-        de machine learning voltados para análise de comportamento de consumo.
-
-    Autor:
-        Renan Douglas Floriano Scavazzini
-        Email: renanscavazzini@gmail.com
-
-    Versão:
-        1.0 - 29/04/2026
-
-    Copyright:
-        Copyright (c) 2026 Renan Douglas Floriano Scavazzini
+        Classe responsável pelo treinamento e execução de modelos
+        estatísticos aplicados ao comportamento de consumo.
     """
 
-    @staticmethod
-    def build_high_spend_flag(df: pd.DataFrame, quantile: float = 0.75) -> pd.DataFrame:
+    def __init__(
+        self,
+        df: pd.DataFrame
+    ):
         """
         Descrição:
-            Cria uma variável binária indicando se uma nota fiscal pertence ao grupo
-            de alto gasto com base em um quantil da distribuição.
+            Inicializa os modelos estatísticos.
 
         Parâmetros:
-            df (pd.DataFrame): DataFrame contendo os dados de notas fiscais.
-            quantile (float): Percentil utilizado como threshold para definir alto gasto.
+            df (pd.DataFrame): DataFrame contendo os dados analíticos.
 
         Referências:
-            - Hastie, T., Tibshirani, R., Friedman, J. (2009). The Elements of Statistical Learning.
+            ---
         """
-        invoice_totals = df.groupby('nota_fiscal_id')['preco_total'].sum()
-        threshold = invoice_totals.quantile(quantile)
-        high_spend = invoice_totals >= threshold
-        df_flag = df.drop(columns=['preco_total'], errors='ignore').merge(
-            high_spend.rename('gasto_alto'),
-            left_on='nota_fiscal_id',
-            right_index=True,
-            how='left'
-        )
-        df_flag['gasto_alto'] = df_flag['gasto_alto'].fillna(False).astype(int)
-        return df_flag
 
-    @staticmethod
-    def train_naive_bayes(df: pd.DataFrame, target_column: str = 'gasto_alto') -> ModelResult:
+        self.logger = setup_logger(
+            self.__class__.__name__
+        )
+
+        self.df = df
+
+    def train_regression(
+        self,
+        features: list[str],
+        target: str
+    ) -> LinearRegression:
         """
         Descrição:
-            Treina um modelo Naive Bayes categórico para classificar notas fiscais
-            com alto gasto com base em variáveis agregadas.
+            Treina modelo de regressão linear.
 
         Parâmetros:
-            df (pd.DataFrame): DataFrame contendo os dados.
-            target_column (str): Nome da variável alvo.
+            features (list[str]): Variáveis independentes.
+            target (str): Variável alvo.
 
         Referências:
-            - Murphy, K. (2012). Machine Learning: A Probabilistic Perspective.
+            - James, G. et al. (2021). An Introduction to Statistical Learning.
         """
-        invoice_features = df.groupby('nota_fiscal_id').agg(
-            supermercado=('supermercado', 'first'),
-            periodo_dia=('periodo_dia', 'first'),
-            total_itens=('quantidade', 'sum'),
-            gasto_total=('preco_total', 'sum'),
-        )
-        invoice_features[target_column] = df.groupby('nota_fiscal_id')[target_column].first()
-        invoice_features = invoice_features.reset_index(drop=True)
 
-        X = invoice_features[['supermercado', 'periodo_dia', 'total_itens']]
-        y = invoice_features[target_column]
+        X = self.df[features]
 
-        encoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
-        X_encoded = encoder.fit_transform(X[['supermercado', 'periodo_dia']])
-        X_final = np.concatenate([X_encoded, X[['total_itens']].values], axis=1)
+        y = self.df[target]
 
-        X_train, X_test, y_train, y_test = train_test_split(
-            X_final, y, test_size=0.2, random_state=42, stratify=y
+        model = LinearRegression()
+
+        model.fit(X, y)
+
+        self.logger.info(
+            'Modelo de regressão treinado'
         )
 
-        model = CategoricalNB()
-        model.fit(X_train, y_train)
-        predictions = model.predict(X_test)
-        accuracy = accuracy_score(y_test, predictions)
+        return model
 
-        return ModelResult(
-            nome='Naive Bayes de Gasto Alto',
-            descricao='Classifica notas fiscais de alto gasto com base em loja, período do dia e número de itens.',
-            metrics={'acuracia': float(accuracy)},
-            modelo=model,
-        )
-
-    @staticmethod
-    def train_spend_regressor(df: pd.DataFrame) -> ModelResult:
+    def train_naive_bayes(
+        self,
+        features: list[str],
+        target: str
+    ) -> GaussianNB:
         """
         Descrição:
-            Treina um modelo de regressão para prever o valor total gasto em uma nota fiscal.
+            Treina modelo Naive Bayes.
 
         Parâmetros:
-            df (pd.DataFrame): DataFrame contendo os dados agregados.
+            features (list[str]): Variáveis independentes.
+            target (str): Variável alvo.
 
         Referências:
-            - Breiman, L. (2001). Random Forests.
+            - Hastie, T. et al. (2009). The Elements of Statistical Learning.
         """
-        invoice_features = df.groupby('nota_fiscal_id').agg(
-            supermercado=('supermercado', 'first'),
-            periodo_dia=('periodo_dia', 'first'),
-            total_itens=('quantidade', 'sum'),
-            gasto_total=('preco_total', 'sum'),
-        ).reset_index(drop=True)
 
-        encoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
-        X_cat = encoder.fit_transform(invoice_features[['supermercado', 'periodo_dia']])
-        X = np.concatenate([X_cat, invoice_features[['total_itens']].values], axis=1)
-        y = invoice_features['gasto_total'].values
+        X = self.df[features]
 
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
+        y = self.df[target]
+
+        model = GaussianNB()
+
+        model.fit(X, y)
+
+        self.logger.info(
+            'Modelo Naive Bayes treinado'
         )
 
-        model = RandomForestRegressor(n_estimators=100, random_state=42)
-        model.fit(X_train, y_train)
-        predictions = model.predict(X_test)
-        mse = mean_squared_error(y_test, predictions)
+        return model
 
-        return ModelResult(
-            nome='Regressão de Gasto Total',
-            descricao='Prevê o gasto total de uma nota com base em características agregadas.',
-            metrics={'mse': float(mse)},
-            modelo=model,
-        )
-
-    @staticmethod
-    def fit_kmeans(df: pd.DataFrame, n_clusters: int = 3) -> ModelResult:
+    def train_kmeans(
+        self,
+        features: list[str],
+        n_clusters: int = 3
+    ) -> KMeans:
         """
         Descrição:
-            Aplica algoritmo KMeans para segmentar notas fiscais com base em comportamento de compra.
+            Treina modelo KMeans para clusterização.
 
         Parâmetros:
-            df (pd.DataFrame): DataFrame contendo os dados.
-            n_clusters (int): Número de clusters.
+            features (list[str]): Variáveis utilizadas na clusterização.
+            n_clusters (int): Quantidade de clusters.
 
         Referências:
-            - MacQueen, J. (1967). Some Methods for Classification and Analysis of Multivariate Observations.
+            - Hastie, T. et al. (2009). The Elements of Statistical Learning.
         """
-        invoice_features = df.groupby('nota_fiscal_id').agg(
-            total_itens=('quantidade', 'sum'),
-            gasto_total=('preco_total', 'sum'),
-        ).reset_index(drop=True)
 
-        model = KMeans(n_clusters=n_clusters, random_state=42)
-        model.fit(invoice_features[['total_itens', 'gasto_total']])
-        invoice_features['cluster'] = model.labels_
-        inertia = float(model.inertia_)
+        X = self.df[features]
 
-        return ModelResult(
-            nome='Clusterização de Notas',
-            descricao='Agrupa notas fiscais por volume de itens e valor total.',
-            metrics={'inercia': inertia},
-            modelo=model,
+        model = KMeans(
+            n_clusters=n_clusters,
+            random_state=42
         )
 
-    @staticmethod
-    def product_association(df: pd.DataFrame, min_support: float = 0.02) -> pd.DataFrame:
-        """
-        Descrição:
-            Calcula a coocorrência de produtos em notas fiscais utilizando suporte mínimo.
+        model.fit(X)
 
-        Parâmetros:
-            df (pd.DataFrame): DataFrame contendo os dados.
-            min_support (float): Suporte mínimo para considerar associação.
+        self.logger.info(
+            f'Modelo KMeans treinado com {n_clusters} clusters'
+        )
 
-        Referências:
-            - Agrawal, R., & Srikant, R. (1994). Fast Algorithms for Mining Association Rules.
-        """
-        basket = df.groupby(['nota_fiscal_id', 'produto'])['quantidade'].sum().unstack(fill_value=0)
-        support = (basket > 0).sum() / basket.shape[0]
-        popular = support[support >= min_support].index.tolist()
-        sub = basket[popular].astype(bool)
-
-        pairs = []
-        for i, prod_i in enumerate(popular):
-            for prod_j in popular[i + 1:]:
-                support_ij = float((sub[prod_i] & sub[prod_j]).mean())
-                if support_ij >= min_support:
-                    pairs.append({'produto_a': prod_i, 'produto_b': prod_j, 'suporte': support_ij})
-
-        return pd.DataFrame(pairs).sort_values('suporte', ascending=False)
+        return model

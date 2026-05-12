@@ -239,20 +239,18 @@ def resumo_produto_mais_comprado(df):
     return produto_mais_comprado
 
 
-def exibe_subtabela_num_produto(df, num_produto):
+def exibe_subtabela_cod_produto(df, cod_produto):
     """
     Descrição:
-        Exibe a subtabela de um produto específico selecionado a partir
-        do índice numérico da lista de produtos únicos presentes no
-        DataFrame.
+        Exibe a subtabela de um produto específico a partir
+        do código do produto (COD_PRODUTO).
 
     Parâmetros:
-        df (pd.DataFrame): DataFrame contendo os dados dos produtos.
-        num_produto (int): Índice do produto desejado na lista de
-            produtos únicos.
+        df (pd.DataFrame): DataFrame contendo os dados.
+        cod_produto (int | str): Código do produto.
 
     Retorno:
-        pd.DataFrame: Subtabela do produto específico.
+        pd.DataFrame: Subtabela contendo o histórico do produto.
 
     Referências:
         ---
@@ -262,28 +260,20 @@ def exibe_subtabela_num_produto(df, num_produto):
         Email: renanscavazzini@gmail.com
 
     Versão:
-        1.0 - 05/05/2026
+        1.0 - 10/05/2026
 
     Copyright:
         Copyright (c) 2026 Renan Douglas Floriano Scavazzini
     """
-    df_unitario = (
-        df[["PRODUTO", "VALOR_PRODUTO", "DATA"]]
+
+    subtabela = (
+        df.loc[df["COD_PRODUTO"] == cod_produto,
+               ["COD_PRODUTO", "PRODUTO", "VALOR_PRODUTO", "DATA"]]
         .drop_duplicates()
+        .sort_values("DATA")
     )
 
-    df_unitario = df_unitario.sort_values(["PRODUTO", "DATA"])
-
-    produtos = df_unitario["PRODUTO"].unique()
-
-    subtabelas = {
-        produto: df_unitario[
-            df_unitario["PRODUTO"] == produto
-        ].sort_values("DATA")
-        for produto in produtos
-    }
-
-    return subtabelas[produtos[num_produto]]
+    return subtabela
 
 
 def exibe_subtabela_nome_produto(df, nome_produto):
@@ -315,7 +305,7 @@ def exibe_subtabela_nome_produto(df, nome_produto):
         Copyright (c) 2026 Renan Douglas Floriano Scavazzini
     """
     df_unitario = (
-        df[["PRODUTO", "VALOR_PRODUTO", "DATA"]]
+        df[["PRODUTO", "COD_PRODUTO", "VALOR_PRODUTO", "DATA"]]
         .drop_duplicates()
     )
 
