@@ -113,9 +113,74 @@ def render(
 
     st.divider()
 
-    st.subheader(
-        '🏪 Gastos por Supermercado'
+    col_market, col_period = st.columns(
+        2,
+        gap="large"
     )
+
+    with col_market:
+
+        st.subheader(
+            "🏪 Gastos por Supermercado"
+        )
+
+        spending_market = (
+
+            df
+
+            .groupby("supermercado")[
+                "preco_total"
+            ]
+
+            .sum()
+
+            .reset_index()
+        )
+
+        fig_market = bar_chart(
+            spending_market,
+            x="supermercado",
+            y="preco_total",
+            title="Gastos por Supermercado"
+        )
+
+        st.plotly_chart(
+            fig_market,
+            use_container_width=True,
+            key="overview_market_chart"
+        )
+
+    with col_period:
+
+        st.subheader(
+            "🕒 Gastos por Período"
+        )
+
+        spending_period = (
+
+            df
+
+            .groupby("periodo_dia")[
+                "preco_total"
+            ]
+
+            .sum()
+
+            .reset_index()
+        )
+
+        fig_period = bar_chart(
+            spending_period,
+            x="periodo_dia",
+            y="preco_total",
+            title="Gastos por Período"
+        )
+
+        st.plotly_chart(
+            fig_period,
+            use_container_width=True,
+            key="overview_period_chart"
+        )
 
     spending_market = (
 
@@ -126,47 +191,6 @@ def render(
         .sum()
 
         .reset_index()
-    )
-
-    fig_market = bar_chart(
-        spending_market,
-        x='supermercado',
-        y='preco_total',
-        title='Gastos por Supermercado'
-    )
-
-    st.plotly_chart(
-        fig_market,
-        use_container_width=True
-    )
-
-    st.divider()
-
-    st.subheader(
-        '🕒 Gastos por Período'
-    )
-
-    spending_period = (
-
-        df
-
-        .groupby('periodo_dia')['preco_total']
-
-        .sum()
-
-        .reset_index()
-    )
-
-    fig_period = bar_chart(
-        spending_period,
-        x='periodo_dia',
-        y='preco_total',
-        title='Gastos por Período'
-    )
-
-    st.plotly_chart(
-        fig_period,
-        use_container_width=True
     )
 
     st.divider()

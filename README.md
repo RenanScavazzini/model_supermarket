@@ -96,7 +96,6 @@ model_supermarket/
 ├── 03_dashboard.ipynb
 ├── README.md
 ├── ARCHITECTURE.md
-├── QUICKSTART.md
 ├── ROADMAP.md
 ├── requirements.txt
 └── requirements-dev.txt
