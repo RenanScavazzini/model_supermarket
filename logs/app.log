@@ -957,3 +957,25 @@
 2026-05-12 22:01:44,311 | SummaryAnalyzer | INFO | Total gasto calculado
 2026-05-12 22:01:44,312 | SummaryAnalyzer | INFO | Ticket médio calculado
 2026-05-12 22:01:44,442 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
+2026-05-12 22:13:23,669 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-12 22:13:24,576 | InvoiceLoader | INFO | DataFrame carregado com 3079 linhas e 16 colunas
+2026-05-12 22:13:24,592 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-12 22:13:24,594 | src.dashboard.views.temporal | INFO | Renderizando página Temporal
+2026-05-12 22:13:24,609 | TemporalAnalyzer | INFO | Análise mensal gerada
+2026-05-12 22:13:24,652 | TemporalAnalyzer | INFO | Análise anual gerada
+2026-05-12 22:13:24,891 | src.dashboard.views.temporal | INFO | Página Temporal renderizada com sucesso
+2026-05-12 22:13:47,147 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-12 22:13:48,076 | InvoiceLoader | INFO | DataFrame carregado com 3079 linhas e 16 colunas
+2026-05-12 22:13:48,093 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-12 22:13:48,094 | src.dashboard.views.products | INFO | Renderizando página Products
+2026-05-12 22:13:48,101 | src.dashboard.views.products | INFO | Página Products renderizada com sucesso
+2026-05-12 22:13:51,989 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-12 22:13:52,836 | InvoiceLoader | INFO | DataFrame carregado com 3079 linhas e 16 colunas
+2026-05-12 22:13:52,852 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-12 22:13:52,853 | src.dashboard.views.products | INFO | Renderizando página Products
+2026-05-12 22:13:52,927 | src.dashboard.views.products | INFO | Página Products renderizada com sucesso
+2026-05-12 22:14:27,037 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-12 22:14:28,070 | InvoiceLoader | INFO | DataFrame carregado com 3079 linhas e 16 colunas
+2026-05-12 22:14:28,095 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-12 22:14:28,104 | src.dashboard.views.database | INFO | Renderizando página Database
+2026-05-12 22:14:28,677 | src.dashboard.views.database | INFO | Página Database renderizada com sucesso

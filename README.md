@@ -28,8 +28,41 @@ O projeto tem como objetivo transformar dados de NFC-e em informações analíti
 - histórico de preços
 - agregações por categoria
 - comparativos entre supermercados
+- filtros dinâmicos
+- visualização completa da base
 - modelos estatísticos
 - exportação de dados
+
+---
+
+## Dashboard
+
+O dashboard interativo possui as seguintes páginas:
+
+### 📊 Overview
+- KPIs gerais
+- gastos por supermercado
+- gastos por período
+- gastos por categoria
+- filtros analíticos
+
+### 📅 Temporal
+- evolução mensal
+- evolução anual
+- gastos diários
+- análises temporais
+
+### 🛒 Products
+- pesquisa por produto
+- pesquisa por código
+- histórico de preços
+- resumo analítico
+- filtros múltiplos
+
+### 🗄️ Database
+- visualização completa da base
+- filtros dinâmicos por coluna
+- exploração analítica detalhada
 
 ---
 
@@ -42,6 +75,32 @@ O projeto tem como objetivo transformar dados de NFC-e em informações analíti
 - Streamlit
 - Scikit-learn
 - PyYAML
+- OpenPyXL
+
+---
+
+## Estrutura do Projeto
+
+```text
+model_supermarket/
+│
+├── config/
+├── data/
+├── docs/
+├── image/
+├── logs/
+├── results/
+├── src/
+├── 01_dados.ipynb
+├── 02_eda.ipynb
+├── 03_dashboard.ipynb
+├── README.md
+├── ARCHITECTURE.md
+├── QUICKSTART.md
+├── ROADMAP.md
+├── requirements.txt
+└── requirements-dev.txt
+```
 
 ---
 
@@ -49,4 +108,4 @@ O projeto tem como objetivo transformar dados de NFC-e em informações analíti
 
 | Autor | GitHub | LinkedIn | Email |
 |-------|--------|----------|-------|
-| Renan Douglas Floriano Scavazzini | [@RenanScavazzini](https://github.com/RenanScavazzini) | [renan-scavazzini](https://www.linkedin.com/in/renan-scavazzini/) | renanscavazzini@gmail.com |
+| Renan Douglas Floriano Scavazzini | [@RenanScavazzini](https://github.com/RenanScavazzini) | [renan-scavazzini](https://www.linkedin.com/in/renan-scavazzini/) | renanscavazzini@gmail.com 
