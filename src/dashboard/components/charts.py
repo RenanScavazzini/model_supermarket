@@ -9,70 +9,158 @@ Autor:
 
 Versão:
     1.0 - 12/05/2026
+    1.1 - 12/05/2026 - Refatoração e melhorias de código
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
 """
 
 import plotly.express as px
-import pandas as pd
 
 
-def bar_chart(
-    data: pd.DataFrame,
-    x: str,
-    y: str,
-    title: str
+def apply_brazilian_format(
+    fig
 ):
     """
     Descrição:
-        Cria gráfico de barras interativo utilizando Plotly Express.
+        Aplica formatação brasileira aos gráficos.
 
     Parâmetros:
-        data (pd.DataFrame): DataFrame contendo os dados do gráfico.
-        x (str): Nome da coluna utilizada no eixo X.
-        y (str): Nome da coluna utilizada no eixo Y.
-        title (str): Título do gráfico.
+        fig: Figura Plotly.
 
-    Referências:
-        - Plotly Technologies Inc. (2024). Plotly Express Documentation.
+    Retorno:
+        fig formatada.
     """
 
-    fig = px.bar(
-        data,
-        x=x,
-        y=y,
-        title=title
+    fig.update_layout(
+
+        separators=',.'
+    )
+
+    fig.update_yaxes(
+
+        tickprefix='R$ ',
+
+        separatethousands=True
+    )
+
+    fig.update_traces(
+
+        hovertemplate=
+        'Valor: R$ %{y:,.2f}<extra></extra>'
     )
 
     return fig
 
 
-def line_chart(
-    data: pd.DataFrame,
-    x: str,
-    y: str,
-    title: str
+def convert_pt_br(
+    text: str
+) -> str:
+    """
+    Converte formato americano para brasileiro.
+    """
+
+    return (
+
+        text
+
+        .replace(',', 'X')
+
+        .replace('.', ',')
+
+        .replace('X', '.')
+    )
+
+
+def bar_chart(
+    data,
+    x,
+    y,
+    title
 ):
     """
     Descrição:
-        Cria gráfico de linha interativo utilizando Plotly Express.
+        Cria gráfico de barras padronizado.
 
     Parâmetros:
-        data (pd.DataFrame): DataFrame contendo os dados do gráfico.
-        x (str): Nome da coluna utilizada no eixo X.
-        y (str): Nome da coluna utilizada no eixo Y.
-        title (str): Título do gráfico.
+        data: DataFrame.
+        x: Coluna eixo X.
+        y: Coluna eixo Y.
+        title: Título gráfico.
 
-    Referências:
-        - Plotly Technologies Inc. (2024). Plotly Express Documentation.
+    Retorno:
+        Figura Plotly.
+    """
+
+    fig = px.bar(
+
+        data,
+
+        x=x,
+
+        y=y,
+
+        title=title
+    )
+
+    fig = apply_brazilian_format(
+        fig
+    )
+
+    for trace in fig.data:
+
+        trace.hovertemplate = (
+
+            'Valor: R$ %{y}<extra></extra>'
+        )
+
+    return fig
+
+
+def line_chart(
+    data,
+    x,
+    y,
+    title,
+    color=None
+):
+    """
+    Descrição:
+        Cria gráfico de linha padronizado.
+
+    Parâmetros:
+        data: DataFrame.
+        x: Coluna eixo X.
+        y: Coluna eixo Y.
+        title: Título gráfico.
+        color: Agrupamento opcional.
+
+    Retorno:
+        Figura Plotly.
     """
 
     fig = px.line(
+
         data,
+
         x=x,
+
         y=y,
+
+        color=color,
+
         title=title
     )
+
+    fig = apply_brazilian_format(
+        fig
+    )
+
+    for trace in fig.data:
+
+        trace.hovertemplate = (
+
+            'Valor: R$ %{y}<extra></extra>'
+        )
 
     return fig

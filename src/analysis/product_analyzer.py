@@ -1,8 +1,7 @@
 """
 Descrição:
     Módulo responsável pelas análises relacionadas a produtos,
-    incluindo busca textual, ranking de produtos mais comprados
-    e histórico temporal de preços.
+    incluindo buscas, histórico de preços e resumos analíticos.
 
 Autor:
     Renan Douglas Floriano Scavazzini
@@ -11,6 +10,7 @@ Autor:
 Versão:
     1.0 - 11/05/2026
     1.1 - 12/05/2026 - Refatoração e melhorias de código
+    2.0 - 12/05/2026 - Adição de novas funcionalidades e melhorias na lógica de análise dos produtos.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -24,8 +24,8 @@ from src.core.logger import setup_logger
 class ProductAnalyzer:
     """
     Descrição:
-        Classe responsável pelas análises de produtos presentes
-        nas notas fiscais de supermercado.
+        Classe responsável pelas análises relacionadas
+        aos produtos das notas fiscais.
     """
 
     def __init__(
@@ -34,7 +34,7 @@ class ProductAnalyzer:
     ):
         """
         Descrição:
-            Inicializa a classe de análise de produtos.
+            Inicializa classe de análise de produtos.
 
         Parâmetros:
             df (pd.DataFrame): DataFrame analítico.
@@ -49,58 +49,22 @@ class ProductAnalyzer:
 
         self.df = df
 
-    def most_purchased_products(
-        self,
-        top_n: int = 10
-    ) -> pd.Series:
-        """
-        Descrição:
-            Retorna ranking dos produtos mais comprados.
-
-        Parâmetros:
-            top_n (int): Quantidade de produtos retornados.
-
-        Referências:
-            ---
-        """
-
-        result = (
-
-            self.df
-
-            .groupby('produto')
-
-            .size()
-
-            .sort_values(
-                ascending=False
-            )
-
-            .head(top_n)
-        )
-
-        self.logger.info(
-            f'Top {top_n} produtos gerado'
-        )
-
-        return result
-
     def search_product(
         self,
         product_name: str
     ) -> pd.DataFrame:
         """
         Descrição:
-            Realiza busca textual de produtos.
+            Realiza busca textual por nome de produto.
 
         Parâmetros:
-            product_name (str): Nome ou trecho do produto.
+            product_name (str): Nome pesquisado.
 
         Referências:
             ---
         """
 
-        result = self.df[
+        return self.df[
 
             self.df['produto']
 
@@ -109,46 +73,218 @@ class ProductAnalyzer:
                 case=False,
                 na=False
             )
+        ]
 
-        ][[
-            'produto',
-            'preco_unitario',
-            'preco_total',
-            'data_hora',
-            'supermercado'
-        ]]
-
-        result = result.sort_values(
-            'data_hora'
-        )
-
-        self.logger.info(
-            f'Busca realizada para: {product_name}'
-        )
-
-        return result
-
-    def product_price_history(
+    def search_product_code(
         self,
-        product_name: str
+        code: int
     ) -> pd.DataFrame:
         """
         Descrição:
-            Retorna histórico temporal de preços do produto.
+            Realiza busca por código do produto.
 
         Parâmetros:
-            product_name (str): Nome do produto.
+            code (int): Código do produto.
 
         Referências:
             ---
         """
 
-        result = self.search_product(
-            product_name
+        return self.df[
+
+            self.df[
+                'codigo_produto'
+            ] == code
+        ]
+
+    def product_summary(
+        self,
+        df_product: pd.DataFrame
+    ) -> dict:
+        """
+        Descrição:
+            Retorna resumo analítico do(s) produto(s).
+
+        Parâmetros:
+            df_product (pd.DataFrame): Base filtrada.
+
+        Referências:
+            ---
+        """
+
+        if df_product.empty:
+
+            return {}
+
+        produtos = sorted(
+
+            df_product[
+                'produto'
+            ]
+
+            .astype(str)
+
+            .unique()
         )
 
-        self.logger.info(
-            f'Histórico de preços gerado para: {product_name}'
+        codigos = sorted(
+
+            df_product[
+                'codigo_produto'
+            ]
+
+            .astype(str)
+
+            .unique()
         )
 
-        return result
+        categorias = sorted(
+
+            df_product[
+                'categoria_produto'
+            ]
+
+            .astype(str)
+
+            .unique()
+        )
+
+        unidades = sorted(
+
+            df_product[
+                'unidade'
+            ]
+
+            .astype(str)
+
+            .unique()
+        )
+
+        supermercados = sorted(
+
+            df_product[
+                'supermercado'
+            ]
+
+            .astype(str)
+
+            .unique()
+        )
+
+        return {
+
+            'Nome':
+
+                ', '.join(
+                    produtos
+                ),
+
+            'Código':
+
+                ', '.join(
+                    codigos
+                ),
+
+            'Categoria':
+
+                ', '.join(
+                    categorias
+                ),
+
+            'Unidade':
+
+                ', '.join(
+                    unidades
+                ),
+
+            'Total gasto':
+
+                round(
+
+                    float(
+
+                        df_product[
+                            'preco_total'
+                        ].sum()
+                    ),
+
+                    2
+                ),
+
+            'Quantidade comprada':
+
+                round(
+
+                    float(
+
+                        df_product[
+                            'quantidade'
+                        ].sum()
+                    ),
+
+                    2
+                ),
+
+            'Valor mínimo':
+
+                round(
+
+                    float(
+
+                        df_product[
+                            'preco_unitario'
+                        ].min()
+                    ),
+
+                    2
+                ),
+
+            'Valor máximo':
+
+                round(
+
+                    float(
+
+                        df_product[
+                            'preco_unitario'
+                        ].max()
+                    ),
+
+                    2
+                ),
+
+            'Valor médio':
+
+                round(
+
+                    float(
+
+                        df_product[
+                            'preco_total'
+                        ].sum()
+
+                        /
+
+                        df_product[
+                            'quantidade'
+                        ].sum()
+                    ),
+
+                    2
+                ),
+
+            'Supermercados':
+
+                ', '.join(
+                    supermercados
+                ),
+
+            'Período mais comprado':
+
+                str(
+
+                    df_product[
+                        'periodo_dia'
+                    ].mode()[0]
+                )
+        }

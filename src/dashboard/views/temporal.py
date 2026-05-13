@@ -1,8 +1,7 @@
 """
 Descrição:
-    Página do dashboard responsável pelas análises temporais,
-    incluindo evolução de gastos ao longo do tempo e visualizações
-    interativas de séries temporais.
+    Página Temporal do dashboard responsável pelas análises
+    temporais de gastos e evolução do comportamento de consumo.
 
 Autor:
     Renan Douglas Floriano Scavazzini
@@ -11,16 +10,23 @@ Autor:
 Versão:
     1.0 - 11/05/2026
     1.1 - 12/05/2026 - Refatoração e melhorias de código
+    2.0 - 12/05/2026 - Adição de novas visualizações e melhorias na interatividade dos gráficos.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
 """
 
 import streamlit as st
-import plotly.express as px
 import pandas as pd
 
 from src.analysis.temporal_analyzer import TemporalAnalyzer
+
+from src.dashboard.components.filters import apply_filters
+
+from src.dashboard.components.charts import (
+    line_chart,
+    bar_chart
+)
 
 from src.core.logger import setup_logger
 
@@ -37,24 +43,22 @@ def render(
 
     Parâmetros:
         df (pd.DataFrame): DataFrame analítico.
-
-    Referências:
-        - Streamlit Documentation.
-        - Plotly Documentation.
     """
 
     logger.info(
         'Renderizando página Temporal'
     )
 
-    st.title(
-        "📅 Análises Temporais"
-    )
+    df = apply_filters(df)
 
     analyzer = TemporalAnalyzer(df)
 
+    st.title(
+        '📅 Análises Temporais'
+    )
+
     st.subheader(
-        "📈 Evolução Mensal dos Gastos"
+        '📈 Evolução Mensal dos Gastos'
     )
 
     monthly = (
@@ -62,14 +66,10 @@ def render(
         .monthly_spending()
     )
 
-    fig_monthly = px.line(
-
+    fig_monthly = line_chart(
         monthly,
-
         x='mes',
-
         y='preco_total',
-
         title='Gastos Mensais'
     )
 
@@ -81,7 +81,7 @@ def render(
     st.divider()
 
     st.subheader(
-        "📊 Evolução Anual dos Gastos"
+        '📊 Evolução Anual dos Gastos'
     )
 
     yearly = (
@@ -89,19 +89,58 @@ def render(
         .yearly_spending()
     )
 
-    fig_yearly = px.bar(
-
+    fig_yearly = bar_chart(
         yearly,
-
         x='ano',
-
         y='preco_total',
-
         title='Gastos Anuais'
     )
 
     st.plotly_chart(
         fig_yearly,
+        use_container_width=True
+    )
+
+    st.divider()
+
+    st.subheader(
+        '📆 Evolução Mensal dos Gastos Diários'
+    )
+
+    daily_temp = df.copy()
+
+    daily_temp['dia'] = (
+        daily_temp['data_hora']
+        .dt.date
+    )
+
+    daily_temp['mes'] = (
+        daily_temp['data_hora']
+        .dt.to_period('M')
+        .astype(str)
+    )
+
+    daily_monthly = (
+
+        daily_temp
+
+        .groupby(['mes', 'dia'])['preco_total']
+
+        .sum()
+
+        .reset_index()
+    )
+
+    fig_daily = line_chart(
+        daily_monthly,
+        x='dia',
+        y='preco_total',
+        title='Evolução Mensal dos Gastos Diários',
+        color='mes'
+    )
+
+    st.plotly_chart(
+        fig_daily,
         use_container_width=True
     )
 
