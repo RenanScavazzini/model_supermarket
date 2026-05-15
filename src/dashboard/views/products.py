@@ -13,6 +13,8 @@ Versão:
     1.1 - 12/05/2026 - Refatoração e melhorias de código
     2.0 - 12/05/2026 - Adição de novas funcionalidades e melhorias na lógica de análise dos produtos.
     3.0 - 13/05/2026 - Adição do mascote Veldora na seção de resumo.
+    4.0 - 13/05/2026 - Integração com filtros globais do dashboard.
+    5.0 - 13/05/2026 - Adição dos personagens Gobta, Ramiris e Milim.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -23,6 +25,10 @@ import pandas as pd
 
 from src.dashboard.components.charts import (
     line_chart
+)
+
+from src.dashboard.components.filters import (
+    apply_filters
 )
 
 from src.analysis.product_analyzer import ProductAnalyzer
@@ -53,19 +59,58 @@ def render(
         'Renderizando página Products'
     )
 
+    # =====================================================
+    # FILTROS GLOBAIS
+    # =====================================================
+
+    filtered_df = apply_filters(df)
+
     st.title(
         '🛒 Produtos'
     )
 
-    analyzer = ProductAnalyzer(df)
-
-    product_name = st.text_input(
-        'Pesquisar produto'
+    analyzer = ProductAnalyzer(
+        filtered_df
     )
 
-    product_code = st.text_input(
-        'Pesquisar código do produto'
+    # =====================================================
+    # ÁREA SUPERIOR
+    # =====================================================
+
+    top_left, top_right = st.columns(
+        [0.12, 0.88],
+        gap="small"
     )
+
+    # =====================================================
+    # GOBTA
+    # =====================================================
+
+    with top_left:
+
+        st.markdown(
+            "<div style='height:6px'></div>",
+            unsafe_allow_html=True
+        )
+
+        st.image(
+            'image/ui/gobta.png',
+            width=90
+        )
+
+    # =====================================================
+    # PESQUISA
+    # =====================================================
+
+    with top_right:
+
+        product_name = st.text_input(
+            'Pesquisar produto'
+        )
+
+        product_code = st.text_input(
+            'Pesquisar código do produto'
+        )
 
     result = pd.DataFrame()
 
@@ -80,6 +125,10 @@ def render(
         result = analyzer.search_product_code(
             int(product_code)
         )
+
+    # =====================================================
+    # RESULTADOS
+    # =====================================================
 
     if not result.empty:
 
@@ -119,17 +168,21 @@ def render(
 
             return
 
+        # =====================================================
+        # RESUMO
+        # =====================================================
+
         st.subheader(
             '📋 Resumo do Produto'
         )
 
         summary_col, image_col = st.columns(
-            [0.70, 0.30],
+            [0.85, 0.30],
             gap="large"
         )
 
         # =====================================================
-        # RESUMOS
+        # MÉTRICAS
         # =====================================================
 
         with summary_col:
@@ -215,18 +268,31 @@ def render(
 
             st.image(
                 'image/ui/veldora.png',
-                width=180
+                width=220
             )
 
         st.divider()
 
         # =====================================================
-        # HISTÓRICO
+        # HISTÓRICO DE COMPRAS
         # =====================================================
 
-        st.subheader(
-            '📄 Histórico de Compras'
+        history_title_col, history_image_col = st.columns(
+            [0.3, 0.8]
         )
+
+        with history_title_col:
+
+            st.subheader(
+                '📄 Histórico de Compras'
+            )
+
+        with history_image_col:
+
+            st.image(
+                'image/ui/ramiris.png',
+                width=85
+            )
 
         display_columns = [
 
@@ -277,19 +343,47 @@ def render(
         st.subheader(
             '📈 Histórico de Preços'
         )
-
-        fig = line_chart(
-            result,
-            x='data_hora',
-            y='preco_unitario',
-            title='Histórico de preços',
-            color='produto'
+        
+        milim_col, price_chart_col = st.columns(
+            [0.2, 0.8],
+            gap="medium"
         )
 
-        st.plotly_chart(
-            fig,
-            use_container_width=True
-        )
+        # =================================================
+        # MILIM
+        # =================================================
+
+        with milim_col:
+
+            st.markdown(
+                "<div style='height:120px'></div>",
+                unsafe_allow_html=True
+            )
+
+            st.image(
+                'image/ui/milim.png',
+                width=245
+            )
+
+        # =================================================
+        # GRÁFICO
+        # =================================================
+
+        with price_chart_col:
+
+            fig = line_chart(
+                result,
+                x='data_hora',
+                y='preco_unitario',
+                title='Histórico de preços',
+                color='produto'
+            )
+
+            st.plotly_chart(
+                fig,
+                use_container_width=True,
+                key='products_price_history_chart'
+            )
 
     else:
 

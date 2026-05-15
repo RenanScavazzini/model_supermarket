@@ -77,12 +77,15 @@ def render(
 
     max_invoice_value = df['valor_total_nota'].max()
 
-    metric_cols = st.columns(5)
+    metric_cols = st.columns(
+        [1.12, 0.2, 1, 1, 1, 1],
+        gap="medium"
+    )
 
     metrics = [
 
         {
-            "image": "image/ui/slime1.png",
+            "image": "image/ui/slime3.png",
 
             "label": "💰 Total Gasto",
 
@@ -105,7 +108,7 @@ def render(
         },
 
         {
-            "image": "image/ui/slime3.png",
+            "image": "image/ui/slime1.png",
 
             "label": "🎟️ Ticket Médio",
 
@@ -139,8 +142,21 @@ def render(
         }
     ]
 
+    metric_render_cols = [
+
+        metric_cols[0],
+
+        metric_cols[2],
+
+        metric_cols[3],
+
+        metric_cols[4],
+
+        metric_cols[5]
+    ]
+
     for col, metric in zip(
-        metric_cols,
+        metric_render_cols,
         metrics
     ):
 
@@ -195,98 +211,107 @@ def render(
     st.divider()
 
     # =====================================================
-    # GRÁFICOS
+    # ÁREA PRINCIPAL + SHION FIXA
     # =====================================================
 
-    col_market, col_period = st.columns(
-        2,
-        gap="large"
+    main_area, shion_area = st.columns(
+        [0.80, 0.20],
+        gap="medium"
     )
 
     # =====================================================
-    # GASTOS POR SUPERMERCADO
+    # ÁREA PRINCIPAL
     # =====================================================
 
-    with col_market:
+    with main_area:
 
-        st.subheader(
-            "🏪 Gastos por Supermercado"
+        # =================================================
+        # GRÁFICOS SUPERIORES
+        # =================================================
+
+        top_left, top_right = st.columns(
+            [1, 1],
+            gap="large"
         )
 
-        spending_market = (
+        # ================================================
+        # GASTOS POR SUPERMERCADO
+        # ================================================
 
-            df
+        with top_left:
 
-            .groupby("supermercado")[
+            st.subheader(
+                "🏪 Gastos por Supermercado"
+            )
 
-                "preco_total"
-            ]
+            spending_market = (
 
-            .sum()
+                df
 
-            .reset_index()
-        )
+                .groupby("supermercado")[
 
-        fig_market = bar_chart(
+                    "preco_total"
+                ]
 
-            spending_market,
+                .sum()
 
-            x="supermercado",
+                .reset_index()
+            )
 
-            y="preco_total",
+            fig_market = bar_chart(
 
-            title="Gastos por Supermercado"
-        )
+                spending_market,
 
-        st.plotly_chart(
+                x="supermercado",
 
-            fig_market,
+                y="preco_total",
 
-            use_container_width=True,
+                title="Gastos por Supermercado"
+            )
 
-            key="overview_market_chart"
-        )
+            st.plotly_chart(
 
-    # =====================================================
-    # GASTOS POR PERÍODO
-    # =====================================================
+                fig_market,
 
-    with col_period:
+                use_container_width=True,
 
-        st.subheader(
-            "🕒 Gastos por Período"
-        )
+                key="overview_market_chart"
+            )
 
-        chart_col, image_col = st.columns(
-            [0.82, 0.18]
-        )
+        # ================================================
+        # GASTOS POR PERÍODO
+        # ================================================
 
-        spending_period = (
+        with top_right:
 
-            df
+            st.subheader(
+                "🕒 Gastos por Período"
+            )
 
-            .groupby("periodo_dia")[
+            spending_period = (
 
-                "preco_total"
-            ]
+                df
 
-            .sum()
+                .groupby("periodo_dia")[
 
-            .reset_index()
-        )
+                    "preco_total"
+                ]
 
-        fig_period = bar_chart(
+                .sum()
 
-            spending_period,
+                .reset_index()
+            )
 
-            x="periodo_dia",
+            fig_period = bar_chart(
 
-            y="preco_total",
+                spending_period,
 
-            title="Gastos por Período"
-        )
+                x="periodo_dia",
 
-        with chart_col:
+                y="preco_total",
+
+                title="Gastos por Período"
+            )
 
             st.plotly_chart(
 
@@ -297,77 +322,100 @@ def render(
                 key="overview_period_chart"
             )
 
-        with image_col:
+        # =================================================
+        # DIVIDER
+        # =================================================
 
-            st.image(
-                'image/ui/shion.png',
-                width=240
+        st.divider()
+
+        # =================================================
+        # TÍTULO CATEGORIA
+        # =================================================
+
+        st.subheader(
+            '📦 Gastos por Categoria'
+        )
+
+        # =================================================
+        # GASTOS POR CATEGORIA
+        # =================================================
+
+        category_left, category_right = st.columns(
+            [0.18, 0.82],
+            gap="medium"
+        )
+
+        with category_left:
+
+            st.markdown(
+                "<div style='height:120px'></div>",
+                unsafe_allow_html=True
             )
 
-    st.divider()
+            st.image(
+                'image/ui/shuna.png',
+                width=200
+            )
+
+        with category_right:
+
+            spending_category = (
+
+                df
+
+                .groupby('categoria_produto')[
+
+                    'preco_total'
+                ]
+
+                .sum()
+
+                .reset_index()
+
+                .sort_values(
+
+                    'preco_total',
+
+                    ascending=False
+                )
+
+                .head(15)
+            )
+
+            fig_category = bar_chart(
+
+                spending_category,
+
+                x='categoria_produto',
+
+                y='preco_total',
+
+                title='Gastos por Categoria'
+            )
+
+            st.plotly_chart(
+
+                fig_category,
+
+                use_container_width=True,
+
+                key='overview_category_chart'
+            )
 
     # =====================================================
-    # GASTOS POR CATEGORIA
+    # SHION FIXA ATRAVESSANDO TUDO
     # =====================================================
 
-    st.subheader(
-        '📦 Gastos por Categoria'
-    )
+    with shion_area:
 
-    chart_col, image_col = st.columns(
-        [0.18, 0.82]
-    )
-
-    spending_category = (
-
-        df
-
-        .groupby('categoria_produto')[
-
-            'preco_total'
-        ]
-
-        .sum()
-
-        .reset_index()
-
-        .sort_values(
-
-            'preco_total',
-
-            ascending=False
+        st.markdown(
+            "<div style='height:180px'></div>",
+            unsafe_allow_html=True
         )
-
-        .head(15)
-    )
-
-    fig_category = bar_chart(
-
-        spending_category,
-
-        x='categoria_produto',
-
-        y='preco_total',
-
-        title='Gastos por Categoria'
-    )
-
-    with image_col:
-
-        st.plotly_chart(
-
-            fig_category,
-
-            use_container_width=True,
-
-            key='overview_category_chart'
-        )
-
-    with chart_col:
 
         st.image(
-            'image/ui/shuna.png',
-            width=140
+            'image/ui/shion.png',
+            width=340
         )
 
     logger.info(

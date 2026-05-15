@@ -128,10 +128,16 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
-st.sidebar.image(
-    str(logo_path),
-    width=220
+col1, col2, col3 = st.sidebar.columns(
+    [0.1, 3, 0.1]
 )
+
+with col2:
+
+    st.image(
+        str(logo_path),
+        width=220
+    )
 
 config = ConfigLoader(
     'config/settings.yaml'

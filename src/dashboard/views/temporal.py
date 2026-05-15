@@ -11,6 +11,7 @@ Versão:
     1.0 - 11/05/2026
     1.1 - 12/05/2026 - Refatoração e melhorias de código
     2.0 - 12/05/2026 - Adição de novas visualizações e melhorias na interatividade dos gráficos.
+    3.0 - 13/05/2026 - Adição dos personagens Souei, Benimaru e Ranga.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -57,8 +58,13 @@ def render(
         '📅 Análises Temporais'
     )
 
-    st.subheader(
-        '📈 Evolução Mensal dos Gastos'
+    # =====================================================
+    # EVOLUÇÃO MENSAL
+    # =====================================================
+
+    monthly_chart_col, ranga_col = st.columns(
+        [0.7, 0.3],
+        gap="medium"
     )
 
     monthly = (
@@ -66,22 +72,50 @@ def render(
         .monthly_spending()
     )
 
-    fig_monthly = line_chart(
-        monthly,
-        x='mes',
-        y='preco_total',
-        title='Gastos Mensais'
-    )
+    with monthly_chart_col:
 
-    st.plotly_chart(
-        fig_monthly,
-        use_container_width=True
-    )
+        st.subheader(
+            '📈 Evolução Mensal dos Gastos'
+        )
+
+        fig_monthly = line_chart(
+            monthly,
+            x='mes',
+            y='preco_total',
+            title='Gastos Mensais'
+        )
+
+        st.plotly_chart(
+            fig_monthly,
+            use_container_width=True,
+            key='temporal_month_chart'
+        )
+
+    with ranga_col:
+
+        st.markdown(
+            "<div style='height:180px'></div>",
+            unsafe_allow_html=True
+        )
+
+        st.image(
+            'image/ui/ranga.png',
+            width=300
+        )
 
     st.divider()
 
+    # =====================================================
+    # EVOLUÇÃO ANUAL
+    # =====================================================
+
     st.subheader(
         '📊 Evolução Anual dos Gastos'
+    )
+    
+    benimaru_col, yearly_chart_col = st.columns(
+        [0.16, 0.84],
+        gap="medium"
     )
 
     yearly = (
@@ -89,22 +123,46 @@ def render(
         .yearly_spending()
     )
 
-    fig_yearly = bar_chart(
-        yearly,
-        x='ano',
-        y='preco_total',
-        title='Gastos Anuais'
-    )
+    with benimaru_col:
 
-    st.plotly_chart(
-        fig_yearly,
-        use_container_width=True
-    )
+        st.markdown(
+            "<div style='height:120px'></div>",
+            unsafe_allow_html=True
+        )
+
+        st.image(
+            'image/ui/benimaru.png',
+            width=240
+        )
+
+    with yearly_chart_col:
+
+        fig_yearly = bar_chart(
+            yearly,
+            x='ano',
+            y='preco_total',
+            title='Gastos Anuais'
+        )
+
+        st.plotly_chart(
+            fig_yearly,
+            use_container_width=True,
+            key='temporal_year_chart'
+        )
 
     st.divider()
 
+    # =====================================================
+    # EVOLUÇÃO DIÁRIA
+    # =====================================================
+
     st.subheader(
         '📆 Evolução Mensal dos Gastos Diários'
+    )
+    
+    souei_col, daily_chart_col = st.columns(
+        [0.16, 0.84],
+        gap="medium"
     )
 
     daily_temp = df.copy()
@@ -131,18 +189,33 @@ def render(
         .reset_index()
     )
 
-    fig_daily = line_chart(
-        daily_monthly,
-        x='dia',
-        y='preco_total',
-        title='Evolução Mensal dos Gastos Diários',
-        color='mes'
-    )
+    with daily_chart_col:
 
-    st.plotly_chart(
-        fig_daily,
-        use_container_width=True
-    )
+        fig_daily = line_chart(
+            daily_monthly,
+            x='dia',
+            y='preco_total',
+            title='Evolução Mensal dos Gastos Diários',
+            color='mes'
+        )
+
+        st.plotly_chart(
+            fig_daily,
+            use_container_width=True,
+            key='temporal_daily_chart'
+        )
+
+    with souei_col:
+
+        st.markdown(
+            "<div style='height:120px'></div>",
+            unsafe_allow_html=True
+        )
+
+        st.image(
+            'image/ui/souei.png',
+            width=240
+        )
 
     logger.info(
         'Página Temporal renderizada com sucesso'
