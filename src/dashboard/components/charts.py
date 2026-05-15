@@ -9,7 +9,7 @@ Autor:
 
 Versão:
     1.0 - 12/05/2026
-    1.1 - 12/05/2026 - Refatoração e melhorias de código
+    2.0 - 13/05/2026 - Refatoração e melhorias visuais.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -34,42 +34,21 @@ def apply_brazilian_format(
 
     fig.update_layout(
 
-        separators=',.'
-    )
+        yaxis=dict(
 
-    fig.update_yaxes(
+            tickformat=',.2f',
 
-        tickprefix='R$ ',
-
-        separatethousands=True
+            separatethousands=True
+        )
     )
 
     fig.update_traces(
 
         hovertemplate=
-        'Valor: R$ %{y:,.2f}<extra></extra>'
+        '%{y:,.2f}<extra></extra>'
     )
 
     return fig
-
-
-def convert_pt_br(
-    text: str
-) -> str:
-    """
-    Converte formato americano para brasileiro.
-    """
-
-    return (
-
-        text
-
-        .replace(',', 'X')
-
-        .replace('.', ',')
-
-        .replace('X', '.')
-    )
 
 
 def bar_chart(
@@ -103,16 +82,16 @@ def bar_chart(
         title=title
     )
 
+    fig.update_layout(
+
+        plot_bgcolor='rgba(0,0,0,0)',
+
+        paper_bgcolor='rgba(0,0,0,0)'
+    )
+
     fig = apply_brazilian_format(
         fig
     )
-
-    for trace in fig.data:
-
-        trace.hovertemplate = (
-
-            'Valor: R$ %{y}<extra></extra>'
-        )
 
     return fig
 
@@ -152,15 +131,15 @@ def line_chart(
         title=title
     )
 
+    fig.update_layout(
+
+        plot_bgcolor='rgba(0,0,0,0)',
+
+        paper_bgcolor='rgba(0,0,0,0)'
+    )
+
     fig = apply_brazilian_format(
         fig
     )
-
-    for trace in fig.data:
-
-        trace.hovertemplate = (
-
-            'Valor: R$ %{y}<extra></extra>'
-        )
 
     return fig

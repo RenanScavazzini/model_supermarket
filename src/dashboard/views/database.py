@@ -9,6 +9,7 @@ Autor:
 
 Versão:
     1.0 - 12/05/2026
+    2.0 - 13/05/2026 - Adição de filtros dinâmicos e estilização visual.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -17,8 +18,13 @@ Copyright:
 import streamlit as st
 import pandas as pd
 
+from pathlib import Path
+
 from src.core.logger import setup_logger
 
+from src.dashboard.components.filters import (
+    apply_filters
+)
 
 logger = setup_logger(__name__)
 
@@ -39,6 +45,8 @@ def render(
         - Pandas Documentation.
     """
 
+    filtered_df = apply_filters(df)
+
     logger.info(
         'Renderizando página Database'
     )
@@ -47,7 +55,7 @@ def render(
         '🗄️ Database'
     )
 
-    temp = df.copy()
+    temp = filtered_df.copy()
 
     st.subheader(
         '🔎 Filtros da Base'
@@ -97,37 +105,83 @@ def render(
         '📄 Base de Dados'
     )
 
-    formatted_rows = (
-
-        f"{len(temp):,}"
-
-        .replace(',', 'X')
-
-        .replace('.', ',')
-
-        .replace('X', '.')
-    )
-
-    st.write(
-        f'Registros encontrados: {formatted_rows}'
-    )
-
     styled_df = temp.style.format({
 
-        'preco_unitario': '{:,.2f}',
+        'preco_unitario':
 
-        'preco_total': '{:,.2f}',
+        lambda x:
+        f'{x:,.2f}'
+        .replace(',', 'X')
+        .replace('.', ',')
+        .replace('X', '.'),
 
-        'quantidade': '{:,.2f}',
+        'preco_total':
 
-        'valor_total_nota': '{:,.2f}'
+        lambda x:
+        f'{x:,.2f}'
+        .replace(',', 'X')
+        .replace('.', ',')
+        .replace('X', '.'),
+
+        'quantidade':
+
+        lambda x:
+        f'{x:,.2f}'
+        .replace(',', 'X')
+        .replace('.', ',')
+        .replace('X', '.'),
+
+        'valor_total_nota':
+
+        lambda x:
+        f'{x:,.2f}'
+        .replace(',', 'X')
+        .replace('.', ',')
+        .replace('X', '.')
     })
 
-    st.dataframe(
-        styled_df,
-        use_container_width=True,
-        height=700
+    col_image, col_table = st.columns(
+        [0.14, 0.86],
+        gap="large"
     )
+
+    with col_image:
+
+        diablo_path = (
+            Path(
+                "image/ui/diablo.png"
+            )
+        )
+
+        st.image(
+            str(diablo_path),
+            width=180
+        )
+
+    with col_table:
+
+        st.markdown(
+
+            f"""
+            <p style="
+                font-size:18px;
+                font-weight:600;
+                color:white;
+                margin-top:10px;
+            ">
+                📦 Registros encontrados:
+                {len(temp):,.0f}
+            </p>
+            """.replace(",", "."),
+
+            unsafe_allow_html=True
+        )
+
+        st.dataframe(
+            styled_df,
+            use_container_width=True,
+            height=650
+        )
 
     logger.info(
         'Página Database renderizada com sucesso'

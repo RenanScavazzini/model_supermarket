@@ -12,6 +12,7 @@ Versão:
     1.0 - 11/05/2026
     1.1 - 12/05/2026 - Refatoração e melhorias de código
     2.0 - 12/05/2026 - Adição de novas funcionalidades e melhorias na lógica de análise dos produtos.
+    3.0 - 13/05/2026 - Adição do mascote Veldora na seção de resumo.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -122,80 +123,106 @@ def render(
             '📋 Resumo do Produto'
         )
 
-        col1, col2, col3 = st.columns(3)
+        summary_col, image_col = st.columns(
+            [0.70, 0.30],
+            gap="large"
+        )
 
-        with col1:
+        # =====================================================
+        # RESUMOS
+        # =====================================================
 
-            st.metric(
-                '🛒 Produto(s)',
-                summary['Nome']
-            )
+        with summary_col:
 
-            st.metric(
-                '🔢 Código(s)',
-                summary['Código']
-            )
+            col1, col2, col3 = st.columns(3)
 
-            st.metric(
-                '📦 Categoria(s)',
-                summary['Categoria']
-            )
+            with col1:
 
-            st.metric(
-                '📏 Unidade(s)',
-                summary['Unidade']
-            )
-
-        with col2:
-
-            st.metric(
-                '💰 Total Gasto',
-                format_currency(
-                    summary['Total gasto']
+                st.metric(
+                    '🛒 Produto(s)',
+                    summary['Nome']
                 )
-            )
 
-            st.metric(
-                '📊 Quantidade Comprada',
-                format_number(
-                    summary['Quantidade comprada']
+                st.metric(
+                    '🔢 Código(s)',
+                    summary['Código']
                 )
-            )
 
-            st.metric(
-                '📉 Valor Mínimo',
-                format_currency(
-                    summary['Valor mínimo']
+                st.metric(
+                    '📦 Categoria(s)',
+                    summary['Categoria']
                 )
-            )
 
-            st.metric(
-                '📈 Valor Máximo',
-                format_currency(
-                    summary['Valor máximo']
+                st.metric(
+                    '📏 Unidade(s)',
+                    summary['Unidade']
                 )
-            )
 
-        with col3:
+            with col2:
 
-            st.metric(
-                '🧮 Valor Médio',
-                format_currency(
-                    summary['Valor médio']
+                st.metric(
+                    '💰 Total Gasto',
+                    format_currency(
+                        summary['Total gasto']
+                    )
                 )
-            )
 
-            st.metric(
-                '🕒 Período Mais Comprado',
-                summary['Período mais comprado']
-            )
+                st.metric(
+                    '📊 Quantidade Comprada',
+                    format_number(
+                        summary['Quantidade comprada']
+                    )
+                )
 
-            st.metric(
-                '🏪 Supermercado(s)',
-                summary['Supermercados']
+                st.metric(
+                    '📉 Valor Mínimo',
+                    format_currency(
+                        summary['Valor mínimo']
+                    )
+                )
+
+                st.metric(
+                    '📈 Valor Máximo',
+                    format_currency(
+                        summary['Valor máximo']
+                    )
+                )
+
+            with col3:
+
+                st.metric(
+                    '🧮 Valor Médio',
+                    format_currency(
+                        summary['Valor médio']
+                    )
+                )
+
+                st.metric(
+                    '🕒 Período Mais Comprado',
+                    summary['Período mais comprado']
+                )
+
+                st.metric(
+                    '🏪 Supermercado(s)',
+                    summary['Supermercados']
+                )
+
+        # =====================================================
+        # VELDORA
+        # =====================================================
+
+        with image_col:
+
+            st.image(
+                'image/ui/veldora.png',
+                width=180
             )
 
         st.divider()
+
+        # =====================================================
+        # HISTÓRICO
+        # =====================================================
 
         st.subheader(
             '📄 Histórico de Compras'
@@ -242,6 +269,10 @@ def render(
         )
 
         st.divider()
+
+        # =====================================================
+        # HISTÓRICO DE PREÇOS
+        # =====================================================
 
         st.subheader(
             '📈 Histórico de Preços'

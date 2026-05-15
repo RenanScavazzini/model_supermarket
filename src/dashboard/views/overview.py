@@ -11,6 +11,8 @@ Autor:
 Versão:
     1.0 - 12/05/2026
     2.0 - 12/05/2026 - Adição de novos indicadores, gráficos e melhorias na apresentação visual dos dados.
+    3.0 - 13/05/2026 - Adição de slimes temáticos na visão geral.
+    4.0 - 13/05/2026 - Adição das personagens Shion e Shuna na seção gráfica.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -21,7 +23,6 @@ import pandas as pd
 
 from src.analysis.summary_analyzer import SummaryAnalyzer
 
-from src.dashboard.components.metrics import metric_card
 from src.dashboard.components.filters import apply_filters
 
 from src.dashboard.components.charts import (
@@ -62,61 +63,149 @@ def render(
         '📊 Visão Geral'
     )
 
-    col1, col2, col3, col4, col5 = st.columns(5)
+    # =====================================================
+    # MÉTRICAS
+    # =====================================================
 
-    with col1:
+    total_spent = analyzer.total_spent()
 
-        metric_card(
-            'Total Gasto',
+    total_invoices = analyzer.total_invoices()
+
+    avg_ticket = analyzer.avg_ticket()
+
+    distinct_products = df['produto'].nunique()
+
+    max_invoice_value = df['valor_total_nota'].max()
+
+    metric_cols = st.columns(5)
+
+    metrics = [
+
+        {
+            "image": "image/ui/slime1.png",
+
+            "label": "💰 Total Gasto",
+
+            "value":
             format_currency(
-                analyzer.total_spent()
+                total_spent
             )
-        )
+        },
 
-    with col2:
+        {
+            "image": "image/ui/slime2.png",
 
-        metric_card(
-            'Notas',
+            "label": "🧾 Notas",
+
+            "value":
             format_number(
-                analyzer.total_invoices(),
+                total_invoices,
                 0
             )
-        )
+        },
 
-    with col3:
+        {
+            "image": "image/ui/slime3.png",
 
-        metric_card(
-            'Ticket Médio',
+            "label": "🎟️ Ticket Médio",
+
+            "value":
             format_currency(
-                analyzer.avg_ticket()
+                avg_ticket
             )
-        )
+        },
 
-    with col4:
+        {
+            "image": "image/ui/slime4.png",
 
-        metric_card(
-            'Qtde Produtos',
+            "label": "🛒 Qtde Produtos",
+
+            "value":
             format_number(
-                df['produto'].nunique(),
+                distinct_products,
                 0
             )
-        )
+        },
 
-    with col5:
+        {
+            "image": "image/ui/slime5.png",
 
-        metric_card(
-            'Valor Máximo Gasto',
+            "label": "🔥 Valor Máximo",
+
+            "value":
             format_currency(
-                df['valor_total_nota'].max()
+                max_invoice_value
             )
-        )
+        }
+    ]
+
+    for col, metric in zip(
+        metric_cols,
+        metrics
+    ):
+
+        with col:
+
+            container = st.container(
+                border=False
+            )
+
+            with container:
+
+                img_col, text_col = st.columns(
+                    [0.32, 0.68]
+                )
+
+                with img_col:
+
+                    st.image(
+                        metric["image"],
+                        width=72
+                    )
+
+                with text_col:
+
+                    st.html(
+
+                        f"""
+                        <div style="padding-top:10px;">
+
+                            <div style="
+                                font-size:20px;
+                                color:#DADADA;
+                                font-weight:600;
+                                margin-bottom:4px;
+                            ">
+                                {metric["label"]}
+                            </div>
+
+                            <div style="
+                                font-size:32px;
+                                font-weight:700;
+                                color:white;
+                                line-height:1.1;
+                            ">
+                                {metric["value"]}
+                            </div>
+
+                        </div>
+                        """
+                    )
 
     st.divider()
+
+    # =====================================================
+    # GRÁFICOS
+    # =====================================================
 
     col_market, col_period = st.columns(
         2,
         gap="large"
     )
+
+    # =====================================================
+    # GASTOS POR SUPERMERCADO
+    # =====================================================
 
     with col_market:
 
@@ -129,6 +218,7 @@ def render(
             df
 
             .groupby("supermercado")[
+
                 "preco_total"
             ]
 
@@ -138,17 +228,28 @@ def render(
         )
 
         fig_market = bar_chart(
+
             spending_market,
+
             x="supermercado",
+
             y="preco_total",
+
             title="Gastos por Supermercado"
         )
 
         st.plotly_chart(
+
             fig_market,
+
             use_container_width=True,
+
             key="overview_market_chart"
         )
+
+    # =====================================================
+    # GASTOS POR PERÍODO
+    # =====================================================
 
     with col_period:
 
@@ -156,11 +257,16 @@ def render(
             "🕒 Gastos por Período"
         )
 
+        chart_col, image_col = st.columns(
+            [0.82, 0.18]
+        )
+
         spending_period = (
 
             df
 
             .groupby("periodo_dia")[
+
                 "preco_total"
             ]
 
@@ -170,47 +276,65 @@ def render(
         )
 
         fig_period = bar_chart(
+
             spending_period,
+
             x="periodo_dia",
+
             y="preco_total",
+
             title="Gastos por Período"
         )
 
-        st.plotly_chart(
-            fig_period,
-            use_container_width=True,
-            key="overview_period_chart"
-        )
+        with chart_col:
 
-    spending_market = (
+            st.plotly_chart(
 
-        df
+                fig_period,
 
-        .groupby('supermercado')['preco_total']
+                use_container_width=True,
 
-        .sum()
+                key="overview_period_chart"
+            )
 
-        .reset_index()
-    )
+        with image_col:
+
+            st.image(
+                'image/ui/shion.png',
+                width=240
+            )
 
     st.divider()
 
+    # =====================================================
+    # GASTOS POR CATEGORIA
+    # =====================================================
+
     st.subheader(
         '📦 Gastos por Categoria'
+    )
+
+    chart_col, image_col = st.columns(
+        [0.18, 0.82]
     )
 
     spending_category = (
 
         df
 
-        .groupby('categoria_produto')['preco_total']
+        .groupby('categoria_produto')[
+
+            'preco_total'
+        ]
 
         .sum()
 
         .reset_index()
 
         .sort_values(
+
             'preco_total',
+
             ascending=False
         )
 
@@ -218,16 +342,33 @@ def render(
     )
 
     fig_category = bar_chart(
+
         spending_category,
+
         x='categoria_produto',
+
         y='preco_total',
+
         title='Gastos por Categoria'
     )
 
-    st.plotly_chart(
-        fig_category,
-        use_container_width=True
-    )
+    with image_col:
+
+        st.plotly_chart(
+
+            fig_category,
+
+            use_container_width=True,
+
+            key='overview_category_chart'
+        )
+
+    with chart_col:
+
+        st.image(
+            'image/ui/shuna.png',
+            width=140
+        )
 
     logger.info(
         'Página Overview renderizada com sucesso'
