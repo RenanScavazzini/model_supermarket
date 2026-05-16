@@ -2011,3 +2011,45 @@
 2026-05-15 20:57:37,962 | InvoiceLoader | INFO | Normalização concluída com sucesso
 2026-05-15 20:57:37,994 | src.dashboard.views.database | INFO | Renderizando página Database
 2026-05-15 20:57:38,693 | src.dashboard.views.database | INFO | Página Database renderizada com sucesso
+2026-05-15 20:59:20,305 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-15 20:59:21,766 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-15 20:59:21,785 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-15 20:59:21,814 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-15 20:59:21,823 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-15 20:59:21,827 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-15 20:59:21,832 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-15 20:59:21,835 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-15 20:59:21,836 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-15 20:59:22,310 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
+2026-05-15 21:02:40,412 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-15 21:02:41,417 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-15 21:02:41,437 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-15 21:02:41,462 | src.dashboard.views.temporal | INFO | Renderizando página Temporal
+2026-05-15 21:02:41,475 | TemporalAnalyzer | INFO | Análise mensal gerada
+2026-05-15 21:02:41,545 | TemporalAnalyzer | INFO | Análise anual gerada
+2026-05-15 21:02:41,865 | src.dashboard.views.temporal | INFO | Página Temporal renderizada com sucesso
+2026-05-15 21:03:45,900 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-15 21:03:46,984 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-15 21:03:46,997 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-15 21:03:47,021 | src.dashboard.views.products | INFO | Renderizando página Products
+2026-05-15 21:03:47,043 | src.dashboard.views.products | INFO | Página Products renderizada com sucesso
+2026-05-15 21:04:03,362 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-15 21:04:04,319 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-15 21:04:04,334 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-15 21:04:04,365 | src.dashboard.views.products | INFO | Renderizando página Products
+2026-05-15 21:04:04,707 | src.dashboard.views.products | INFO | Página Products renderizada com sucesso
+2026-05-15 21:05:13,674 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-15 21:05:14,763 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-15 21:05:14,779 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-15 21:05:14,807 | src.dashboard.views.database | INFO | Renderizando página Database
+2026-05-15 21:05:15,389 | src.dashboard.views.database | INFO | Página Database renderizada com sucesso
+2026-05-15 21:05:52,749 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-15 21:05:53,817 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-15 21:05:53,832 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-15 21:05:53,855 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-15 21:05:53,862 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-15 21:05:53,864 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-15 21:05:53,866 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-15 21:05:53,867 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-15 21:05:53,868 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-15 21:05:54,093 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
