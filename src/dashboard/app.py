@@ -17,8 +17,15 @@ Copyright:
 import streamlit as st
 import base64
 from pathlib import Path
+import sys
 
 from streamlit_option_menu import option_menu
+
+sys.path.append(
+    str(
+        Path(__file__).resolve().parents[2]
+    )
+)
 
 from src.core.config_loader import ConfigLoader
 
