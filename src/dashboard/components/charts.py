@@ -11,7 +11,7 @@ Versão:
     1.0 - 12/05/2026
     2.0 - 13/05/2026 - Adição de valores acima das barras.
     3.0 - 13/05/2026 - Remoção completa dos títulos internos dos gráficos.
-    4.0 - 13/05/2026 - Compatibilidade com versões antigas do Plotly.
+    4.0 - 13/05/2026 - Compatibilidade mobile e Plotly antigo.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -53,6 +53,28 @@ def apply_brazilian_format(
     return fig
 
 
+def remove_plotly_title(
+    fig
+):
+    """
+    Descrição:
+        Remove completamente título interno do Plotly.
+    """
+
+    fig.update_layout(
+
+        title_text='',
+
+        title=None,
+
+        margin=dict(
+            t=30
+        )
+    )
+
+    return fig
+
+
 def bar_chart(
     data,
     x,
@@ -62,14 +84,6 @@ def bar_chart(
     """
     Descrição:
         Cria gráfico de barras padronizado.
-
-    Parâmetros:
-        data: DataFrame.
-        x: Coluna eixo X.
-        y: Coluna eixo Y.
-
-    Retorno:
-        Figura Plotly.
     """
 
     fig = px.bar(
@@ -84,10 +98,12 @@ def bar_chart(
     )
 
     # =====================================================
-    # REMOVE TÍTULO COMPLETAMENTE
+    # REMOVE TÍTULO
     # =====================================================
 
-    fig.layout.title = None
+    fig = remove_plotly_title(
+        fig
+    )
 
     # =====================================================
     # LAYOUT
@@ -97,11 +113,7 @@ def bar_chart(
 
         plot_bgcolor='rgba(0,0,0,0)',
 
-        paper_bgcolor='rgba(0,0,0,0)',
-
-        margin=dict(
-            t=60
-        )
+        paper_bgcolor='rgba(0,0,0,0)'
     )
 
     # =====================================================
@@ -137,15 +149,6 @@ def line_chart(
     """
     Descrição:
         Cria gráfico de linha padronizado.
-
-    Parâmetros:
-        data: DataFrame.
-        x: Coluna eixo X.
-        y: Coluna eixo Y.
-        color: Agrupamento opcional.
-
-    Retorno:
-        Figura Plotly.
     """
 
     fig = px.line(
@@ -160,10 +163,12 @@ def line_chart(
     )
 
     # =====================================================
-    # REMOVE TÍTULO COMPLETAMENTE
+    # REMOVE TÍTULO
     # =====================================================
 
-    fig.layout.title = None
+    fig = remove_plotly_title(
+        fig
+    )
 
     # =====================================================
     # LAYOUT

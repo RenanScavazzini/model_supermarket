@@ -2372,3 +2372,13 @@
 2026-05-18 10:52:19,284 | InvoiceLoader | INFO | Normalização concluída com sucesso
 2026-05-18 10:52:19,310 | src.dashboard.views.products | INFO | Renderizando página Products
 2026-05-18 10:52:19,672 | src.dashboard.views.products | INFO | Página Products renderizada com sucesso
+2026-05-18 10:57:17,140 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 10:57:18,346 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 10:57:18,368 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 10:57:18,396 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-18 10:57:18,410 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 10:57:18,411 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 10:57:18,412 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 10:57:18,412 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 10:57:18,413 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-18 10:57:18,786 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
