@@ -9,7 +9,8 @@ Autor:
 
 Versão:
     1.0 - 12/05/2026
-    2.0 - 13/05/2026 - Refatoração e melhorias visuais.
+    2.0 - 13/05/2026 - Adição de barras slime customizadas.
+    3.0 - 13/05/2026 - Adição de valores acima das barras.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -79,14 +80,38 @@ def bar_chart(
 
         y=y,
 
-        title=title
+        title=title,
+
+        text_auto='.2s'
     )
+
+    # =====================================================
+    # LAYOUT
+    # =====================================================
 
     fig.update_layout(
 
         plot_bgcolor='rgba(0,0,0,0)',
 
-        paper_bgcolor='rgba(0,0,0,0)'
+        paper_bgcolor='rgba(0,0,0,0)',
+
+        margin=dict(t=80)
+    )
+
+    # =====================================================
+    # TEXTO DAS BARRAS
+    # =====================================================
+
+    fig.update_traces(
+
+        textposition='outside',
+
+        textfont=dict(
+            size=13,
+            color='white'
+        ),
+
+        cliponaxis=False
     )
 
     fig = apply_brazilian_format(

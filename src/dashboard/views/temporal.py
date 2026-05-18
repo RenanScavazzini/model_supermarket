@@ -12,6 +12,7 @@ Versão:
     1.1 - 12/05/2026 - Refatoração e melhorias de código
     2.0 - 12/05/2026 - Adição de novas visualizações e melhorias na interatividade dos gráficos.
     3.0 - 13/05/2026 - Adição dos personagens Souei, Benimaru e Ranga.
+    4.0 - 13/05/2026 - Reorganização da ordem dos gráficos e melhoria da evolução diária.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -57,6 +58,53 @@ def render(
     st.title(
         '📅 Análises Temporais'
     )
+
+    # =====================================================
+    # EVOLUÇÃO ANUAL
+    # =====================================================
+
+    st.subheader(
+        '📊 Evolução Anual dos Gastos'
+    )
+
+    benimaru_col, yearly_chart_col = st.columns(
+        [0.16, 0.84],
+        gap="medium"
+    )
+
+    yearly = (
+        analyzer
+        .yearly_spending()
+    )
+
+    with benimaru_col:
+
+        st.markdown(
+            "<div style='height:120px'></div>",
+            unsafe_allow_html=True
+        )
+
+        st.image(
+            'image/ui/benimaru.png',
+            width=240
+        )
+
+    with yearly_chart_col:
+
+        fig_yearly = bar_chart(
+            yearly,
+            x='ano',
+            y='preco_total',
+            title='Gastos Anuais'
+        )
+
+        st.plotly_chart(
+            fig_yearly,
+            use_container_width=True,
+            key='temporal_year_chart'
+        )
+
+    st.divider()
 
     # =====================================================
     # EVOLUÇÃO MENSAL
@@ -106,60 +154,13 @@ def render(
     st.divider()
 
     # =====================================================
-    # EVOLUÇÃO ANUAL
-    # =====================================================
-
-    st.subheader(
-        '📊 Evolução Anual dos Gastos'
-    )
-    
-    benimaru_col, yearly_chart_col = st.columns(
-        [0.16, 0.84],
-        gap="medium"
-    )
-
-    yearly = (
-        analyzer
-        .yearly_spending()
-    )
-
-    with benimaru_col:
-
-        st.markdown(
-            "<div style='height:120px'></div>",
-            unsafe_allow_html=True
-        )
-
-        st.image(
-            'image/ui/benimaru.png',
-            width=240
-        )
-
-    with yearly_chart_col:
-
-        fig_yearly = bar_chart(
-            yearly,
-            x='ano',
-            y='preco_total',
-            title='Gastos Anuais'
-        )
-
-        st.plotly_chart(
-            fig_yearly,
-            use_container_width=True,
-            key='temporal_year_chart'
-        )
-
-    st.divider()
-
-    # =====================================================
     # EVOLUÇÃO DIÁRIA
     # =====================================================
 
     st.subheader(
-        '📆 Evolução Mensal dos Gastos Diários'
+        '📆 Evolução Diária dos Gastos'
     )
-    
+
     souei_col, daily_chart_col = st.columns(
         [0.16, 0.84],
         gap="medium"
@@ -172,17 +173,11 @@ def render(
         .dt.date
     )
 
-    daily_temp['mes'] = (
-        daily_temp['data_hora']
-        .dt.to_period('M')
-        .astype(str)
-    )
-
-    daily_monthly = (
+    daily_spending = (
 
         daily_temp
 
-        .groupby(['mes', 'dia'])['preco_total']
+        .groupby('dia')['preco_total']
 
         .sum()
 
@@ -192,11 +187,10 @@ def render(
     with daily_chart_col:
 
         fig_daily = line_chart(
-            daily_monthly,
+            daily_spending,
             x='dia',
             y='preco_total',
-            title='Evolução Mensal dos Gastos Diários',
-            color='mes'
+            title='Evolução Diária dos Gastos'
         )
 
         st.plotly_chart(

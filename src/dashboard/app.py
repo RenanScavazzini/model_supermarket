@@ -9,6 +9,8 @@ Versão:
     1.0 - 12/05/2026
     2.0 - 12/05/2026 - Adição de novas funcionalidades e melhorias na interface do usuário.
     3.0 - 13/05/2026 - Adicionando design do anime That Time I Got Reincarnated as a Slime.
+    4.0 - 13/05/2026 - Tradução das abas para PT-BR e melhoria visual da navegação.
+    5.0 - 13/05/2026 - Adição de responsividade mobile.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -70,6 +72,10 @@ st.set_page_config(
     initial_sidebar_state='collapsed'
 )
 
+# =====================================================
+# BACKGROUND
+# =====================================================
+
 background_path = (
     Path("image/background.png")
 )
@@ -98,6 +104,144 @@ st.markdown(
 
         background-attachment: fixed;
     }}
+
+    </style>
+    """,
+
+    unsafe_allow_html=True
+)
+
+# =====================================================
+# RESPONSIVIDADE MOBILE
+# =====================================================
+
+st.markdown(
+
+    """
+    <style>
+
+    /* =================================================
+       MOBILE RESPONSIVO
+    ================================================= */
+
+    @media (max-width: 768px) {
+
+        /* =============================================
+           TABS
+        ============================================= */
+
+        .nav-link {
+
+            font-size: 13px !important;
+
+            padding: 10px 12px !important;
+
+            margin: 2px !important;
+
+            border-radius: 12px !important;
+        }
+
+        /* =============================================
+           ÍCONES
+        ============================================= */
+
+        .nav-link i {
+
+            font-size: 14px !important;
+        }
+
+        /* =============================================
+           TÍTULOS
+        ============================================= */
+
+        h1 {
+
+            font-size: 28px !important;
+        }
+
+        h2, h3 {
+
+            font-size: 20px !important;
+        }
+
+        /* =============================================
+           MÉTRICAS
+        ============================================= */
+
+        [data-testid="metric-container"] {
+
+            padding: 8px !important;
+        }
+
+        /* =============================================
+           IMAGENS
+        ============================================= */
+
+        img {
+
+            max-width: 100% !important;
+
+            height: auto !important;
+        }
+
+        /* =============================================
+           PLOTLY
+        ============================================= */
+
+        .js-plotly-plot {
+
+            width: 100% !important;
+        }
+
+        /* =============================================
+           SIDEBAR
+        ============================================= */
+
+        section[data-testid="stSidebar"] {
+
+            width: 260px !important;
+        }
+
+        /* =============================================
+           COLUNAS
+        ============================================= */
+
+        div[data-testid="column"] {
+
+            width: 100% !important;
+
+            flex: 1 1 100% !important;
+
+            min-width: 100% !important;
+        }
+
+        /* =============================================
+           MÉTRICAS PERSONALIZADAS
+        ============================================= */
+
+        div[data-testid="stHorizontalBlock"] {
+
+            gap: 8px !important;
+        }
+
+        /* =============================================
+           TEXTOS GRANDES
+        ============================================= */
+
+        p, label, span {
+
+            font-size: 14px !important;
+        }
+
+        /* =============================================
+           DATAFRAME
+        ============================================= */
+
+        .stDataFrame {
+
+            overflow-x: auto !important;
+        }
+    }
 
     </style>
     """,
@@ -146,6 +290,10 @@ with col2:
         width=220
     )
 
+# =====================================================
+# CONFIGURAÇÕES
+# =====================================================
+
 config = ConfigLoader(
     'config/settings.yaml'
 )
@@ -158,6 +306,10 @@ data_path = config.get(
 
 df = loader.load(data_path)
 
+# =====================================================
+# TABS
+# =====================================================
+
 tab_image_path = (
     Path("image/ui/selected_tab_blue.png")
 )
@@ -167,42 +319,101 @@ tab_image_base64 = get_base64_image(
 )
 
 selected = option_menu(
+
     menu_title=None,
-    options=['Overview', 'Temporal', 'Products', 'Database'],
-    icons=['house', 'calendar', 'cart', 'database'],
+
+    options=[
+        'Visão Geral',
+        'Temporal',
+        'Produtos',
+        'Base de Dados'
+    ],
+
+    icons=[
+        'house',
+        'calendar',
+        'cart',
+        'database'
+    ],
+
     orientation='horizontal',
+
     styles={
-        "container": {"margin": "0 !important", "padding": "0 !important"},
-        "icon": {"color": "white", "font-size": "18px"},
+
+        "container": {
+
+            "margin": "0 !important",
+
+            "padding": "0 !important"
+        },
+
+        "icon": {
+
+            "color": "white",
+
+            "font-size": "22px"
+        },
+
         "nav-link": {
+
             "border-radius": "18px",
+
             "color": "white",
-            "background-color": "rgba(255,255,255,0.05)",
-            "padding": "12px 26px",
+
+            "background-color":
+            "rgba(255,255,255,0.05)",
+
+            "padding": "14px 30px",
+
             "margin": "0 6px",
+
             "transition": "0.25s ease",
+
+            "font-size": "20px",
+
+            "font-weight": "500",
         },
+
         "nav-link:hover": {
-            "background-color": "rgba(120,180,255,0.10)",
+
+            "background-color":
+            "rgba(120,180,255,0.10)",
         },
+
         "nav-link-selected": {
-            "background-image": f"url(data:image/png;base64,{tab_image_base64})",
+
+            "background-image":
+            f"url(data:image/png;base64,{tab_image_base64})",
+
             "background-size": "100% 100%",
+
             "background-position": "center",
+
             "background-repeat": "no-repeat",
+
             "background-color": "transparent",
+
             "padding": "16px 34px",
+
             "overflow": "visible",
+
             "color": "white",
-            "font-weight": "700",
+
+            "font-weight": "600",
+
             "border": "none",
+
             "box-shadow":
             "0 0 18px rgba(80,180,255,0.55)",
         },
     }
 )
 
-if selected == 'Overview':
+# =====================================================
+# RENDERIZAÇÃO DAS PÁGINAS
+# =====================================================
+
+if selected == 'Visão Geral':
 
     overview.render(df)
 
@@ -210,10 +421,10 @@ elif selected == 'Temporal':
 
     temporal.render(df)
 
-elif selected == 'Products':
+elif selected == 'Produtos':
 
     products.render(df)
 
-elif selected == 'Database':
+elif selected == 'Base de Dados':
 
     database.render(df)
