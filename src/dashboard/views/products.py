@@ -375,7 +375,6 @@ def render(
                 result,
                 x='data_hora',
                 y='preco_unitario',
-                title='Histórico de preços',
                 color='produto'
             )
 

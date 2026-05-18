@@ -95,7 +95,6 @@ def render(
             yearly,
             x='ano',
             y='preco_total',
-            title='Gastos Anuais'
         )
 
         st.plotly_chart(
@@ -130,7 +129,6 @@ def render(
             monthly,
             x='mes',
             y='preco_total',
-            title='Gastos Mensais'
         )
 
         st.plotly_chart(
@@ -190,7 +188,6 @@ def render(
             daily_spending,
             x='dia',
             y='preco_total',
-            title='Evolução Diária dos Gastos'
         )
 
         st.plotly_chart(

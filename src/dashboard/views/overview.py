@@ -266,7 +266,6 @@ def render(
 
                 y="preco_total",
 
-                title="Gastos por Supermercado"
             )
 
             st.plotly_chart(
@@ -310,7 +309,6 @@ def render(
 
                 y="preco_total",
 
-                title="Gastos por Período"
             )
 
             st.plotly_chart(
@@ -390,7 +388,6 @@ def render(
 
                 y='preco_total',
 
-                title='Gastos por Categoria'
             )
 
             st.plotly_chart(

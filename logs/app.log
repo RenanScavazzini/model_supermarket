@@ -2382,3 +2382,23 @@
 2026-05-18 10:57:18,412 | SummaryAnalyzer | INFO | Total gasto calculado
 2026-05-18 10:57:18,413 | SummaryAnalyzer | INFO | Ticket médio calculado
 2026-05-18 10:57:18,786 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
+2026-05-18 11:05:37,590 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 11:05:39,079 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 11:05:39,109 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 11:05:39,153 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-18 11:05:39,258 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 11:05:39,259 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 11:05:39,260 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 11:05:39,260 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 11:05:39,261 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-18 11:05:39,591 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
+2026-05-18 11:05:47,177 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 11:05:48,233 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 11:05:48,248 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 11:05:48,274 | src.dashboard.views.products | INFO | Renderizando página Products
+2026-05-18 11:05:48,297 | src.dashboard.views.products | INFO | Página Products renderizada com sucesso
+2026-05-18 11:05:51,874 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 11:05:52,926 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 11:05:52,941 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 11:05:52,969 | src.dashboard.views.products | INFO | Renderizando página Products
+2026-05-18 11:05:53,369 | src.dashboard.views.products | INFO | Página Products renderizada com sucesso

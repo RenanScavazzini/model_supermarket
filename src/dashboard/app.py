@@ -152,7 +152,7 @@ st.markdown(
         }
 
         /* =============================================
-           TÍTULOS
+        TÍTULOS MOBILE
         ============================================= */
 
         h1 {
@@ -160,18 +160,49 @@ st.markdown(
             font-size: 42px !important;
 
             font-weight: 800 !important;
+
+            line-height: 1.2 !important;
         }
 
         h2 {
 
-            font-size: 32px !important;
+            font-size: 34px !important;
 
             font-weight: 700 !important;
+
+            line-height: 1.2 !important;
         }
 
         h3 {
 
-            font-size: 26px !important;
+            font-size: 30px !important;
+
+            font-weight: 700 !important;
+
+            line-height: 1.2 !important;
+        }
+
+        /* =============================================
+        STREAMLIT HEADERS
+        ============================================= */
+
+        [data-testid="stMarkdownContainer"] h1 {
+
+            font-size: 42px !important;
+
+            font-weight: 800 !important;
+        }
+
+        [data-testid="stMarkdownContainer"] h2 {
+
+            font-size: 34px !important;
+
+            font-weight: 700 !important;
+        }
+
+        [data-testid="stMarkdownContainer"] h3 {
+
+            font-size: 30px !important;
 
             font-weight: 700 !important;
         }
