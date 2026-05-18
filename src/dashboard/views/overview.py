@@ -292,13 +292,36 @@ def render(
                 df
 
                 .groupby("periodo_dia")[
-
                     "preco_total"
                 ]
 
                 .sum()
 
                 .reset_index()
+            )
+
+            order_period = [
+                'MANHA',
+                'TARDE',
+                'NOITE'
+            ]
+
+            spending_period['periodo_dia'] = pd.Categorical(
+
+                spending_period['periodo_dia'],
+
+                categories=order_period,
+
+                ordered=True
+            )
+
+            spending_period = (
+
+                spending_period
+
+                .sort_values(
+                    'periodo_dia'
+                )
             )
 
             fig_period = bar_chart(

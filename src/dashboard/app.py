@@ -12,6 +12,7 @@ Versão:
     4.0 - 13/05/2026 - Tradução das abas para PT-BR e melhoria visual da navegação.
     5.0 - 13/05/2026 - Adição de responsividade mobile.
     6.0 - 13/05/2026 - Ajustes visuais mobile e melhorias tipográficas.
+    7.0 - 13/05/2026 - Adição da aba Modelo Estatístico.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -38,7 +39,8 @@ from src.dashboard.views import (
     overview,
     products,
     temporal,
-    database
+    database,
+    statistical_model
 )
 
 
@@ -374,14 +376,16 @@ selected = option_menu(
         'Visão Geral',
         'Temporal',
         'Produtos',
-        'Base de Dados'
+        'Base de Dados',
+        'Modelo'
     ],
 
     icons=[
         'house',
         'calendar',
         'cart',
-        'database'
+        'database',
+        'activity'
     ],
 
     orientation='horizontal',
@@ -476,3 +480,7 @@ elif selected == 'Produtos':
 elif selected == 'Base de Dados':
 
     database.render(df)
+
+elif selected == 'Modelo':
+
+    statistical_model.render(df)

@@ -2402,3 +2402,149 @@
 2026-05-18 11:05:52,941 | InvoiceLoader | INFO | Normalização concluída com sucesso
 2026-05-18 11:05:52,969 | src.dashboard.views.products | INFO | Renderizando página Products
 2026-05-18 11:05:53,369 | src.dashboard.views.products | INFO | Página Products renderizada com sucesso
+2026-05-18 11:07:44,490 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 11:07:45,476 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 11:07:45,497 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 11:07:45,521 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-18 11:07:45,530 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 11:07:45,531 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 11:07:45,532 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 11:07:45,533 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 11:07:45,533 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-18 11:07:45,763 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
+2026-05-18 11:13:32,686 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 11:13:33,847 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 11:13:33,868 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 11:13:33,897 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-18 11:13:33,905 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 11:13:33,909 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 11:13:33,910 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 11:13:33,911 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 11:13:33,912 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-18 11:13:34,470 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
+2026-05-18 11:13:48,593 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 11:13:49,617 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 11:13:49,635 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 11:13:49,659 | src.dashboard.views.temporal | INFO | Renderizando página Temporal
+2026-05-18 11:13:49,670 | TemporalAnalyzer | INFO | Análise anual gerada
+2026-05-18 11:13:49,764 | TemporalAnalyzer | INFO | Análise mensal gerada
+2026-05-18 11:13:49,924 | src.dashboard.views.temporal | INFO | Página Temporal renderizada com sucesso
+2026-05-18 11:13:51,357 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 11:13:52,388 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 11:13:52,404 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 11:13:52,428 | src.dashboard.views.products | INFO | Renderizando página Products
+2026-05-18 11:13:52,450 | src.dashboard.views.products | INFO | Página Products renderizada com sucesso
+2026-05-18 15:02:24,249 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:02:25,787 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:02:25,813 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:02:25,878 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-18 15:02:25,894 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:02:25,895 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:02:25,896 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:02:25,897 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:02:25,897 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-18 15:02:27,698 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
+2026-05-18 15:03:20,873 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:03:22,087 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:03:22,110 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:03:22,142 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-18 15:03:22,154 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:03:22,156 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:03:22,156 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:03:22,157 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:03:22,157 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-18 15:03:22,551 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
+2026-05-18 15:03:31,688 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:03:32,724 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:03:32,738 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:03:32,762 | src.dashboard.views.temporal | INFO | Renderizando página Temporal
+2026-05-18 15:03:32,777 | TemporalAnalyzer | INFO | Análise anual gerada
+2026-05-18 15:03:32,874 | TemporalAnalyzer | INFO | Análise mensal gerada
+2026-05-18 15:03:33,060 | src.dashboard.views.temporal | INFO | Página Temporal renderizada com sucesso
+2026-05-18 15:03:39,877 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:03:40,801 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:03:40,817 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:03:40,845 | src.dashboard.views.statistical_model | INFO | Renderizando página Modelo Estatístico
+2026-05-18 15:03:40,848 | src.dashboard.views.statistical_model | INFO | Página Modelo Estatístico renderizada com sucesso
+2026-05-18 15:04:34,365 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:04:35,741 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:04:35,760 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:04:35,788 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-18 15:04:35,797 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:04:35,798 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:04:35,799 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:04:35,800 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:04:35,800 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-18 15:04:36,080 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
+2026-05-18 15:04:40,468 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:04:41,484 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:04:41,501 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:04:41,526 | src.dashboard.views.statistical_model | INFO | Renderizando página Modelo Estatístico
+2026-05-18 15:04:41,528 | src.dashboard.views.statistical_model | INFO | Página Modelo Estatístico renderizada com sucesso
+2026-05-18 15:05:29,664 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:05:30,935 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:05:30,961 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:05:30,988 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-18 15:05:31,051 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:05:31,052 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:05:31,053 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:05:31,054 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:05:31,054 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-18 15:05:31,336 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
+2026-05-18 15:05:35,412 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:05:36,516 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:05:36,531 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:05:36,556 | src.dashboard.views.statistical_model | INFO | Renderizando página Modelo Estatístico
+2026-05-18 15:05:36,558 | src.dashboard.views.statistical_model | INFO | Página Modelo Estatístico renderizada com sucesso
+2026-05-18 15:05:46,380 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:05:47,318 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:05:47,335 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:05:47,365 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-18 15:05:47,375 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:05:47,377 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:05:47,378 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:05:47,379 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:05:47,379 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-18 15:05:47,629 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
+2026-05-18 15:08:29,655 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:08:30,842 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:08:30,862 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:08:30,893 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-18 15:08:30,910 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:08:30,911 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:08:30,912 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:08:30,912 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:08:30,913 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-18 15:08:31,282 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
+2026-05-18 15:09:07,444 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:09:08,511 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:09:08,526 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:09:08,549 | src.dashboard.views.temporal | INFO | Renderizando página Temporal
+2026-05-18 15:09:08,561 | TemporalAnalyzer | INFO | Análise anual gerada
+2026-05-18 15:09:08,663 | TemporalAnalyzer | INFO | Análise mensal gerada
+2026-05-18 15:09:08,825 | src.dashboard.views.temporal | INFO | Página Temporal renderizada com sucesso
+2026-05-18 15:09:35,442 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:09:36,511 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:09:36,533 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:09:36,571 | src.dashboard.views.products | INFO | Renderizando página Products
+2026-05-18 15:09:36,600 | src.dashboard.views.products | INFO | Página Products renderizada com sucesso
+2026-05-18 15:09:41,215 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:09:42,148 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:09:42,165 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:09:42,201 | src.dashboard.views.database | INFO | Renderizando página Database
+2026-05-18 15:09:43,526 | src.dashboard.views.database | INFO | Página Database renderizada com sucesso
+2026-05-18 15:10:02,565 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:10:03,814 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:10:03,830 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:10:03,852 | src.dashboard.views.statistical_model | INFO | Renderizando página Modelo Estatístico
+2026-05-18 15:10:03,854 | src.dashboard.views.statistical_model | INFO | Página Modelo Estatístico renderizada com sucesso
+2026-05-18 15:10:06,590 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-05-18 15:10:07,646 | InvoiceLoader | INFO | DataFrame carregado com 3104 linhas e 16 colunas
+2026-05-18 15:10:07,670 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-05-18 15:10:07,692 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-05-18 15:10:07,701 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:10:07,702 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:10:07,703 | SummaryAnalyzer | INFO | Quantidade de notas calculada
+2026-05-18 15:10:07,704 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-05-18 15:10:07,704 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-05-18 15:10:07,957 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
