@@ -11,6 +11,7 @@ Versão:
     3.0 - 13/05/2026 - Adicionando design do anime That Time I Got Reincarnated as a Slime.
     4.0 - 13/05/2026 - Tradução das abas para PT-BR e melhoria visual da navegação.
     5.0 - 13/05/2026 - Adição de responsividade mobile.
+    6.0 - 13/05/2026 - Ajustes visuais mobile e melhorias tipográficas.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -156,12 +157,23 @@ st.markdown(
 
         h1 {
 
-            font-size: 28px !important;
+            font-size: 42px !important;
+
+            font-weight: 800 !important;
         }
 
-        h2, h3 {
+        h2 {
 
-            font-size: 20px !important;
+            font-size: 32px !important;
+
+            font-weight: 700 !important;
+        }
+
+        h3 {
+
+            font-size: 26px !important;
+
+            font-weight: 700 !important;
         }
 
         /* =============================================
@@ -225,12 +237,17 @@ st.markdown(
         }
 
         /* =============================================
-           TEXTOS GRANDES
+           FONTES MOBILE
         ============================================= */
 
-        p, label, span {
+        label {
 
-            font-size: 14px !important;
+            font-size: 15px !important;
+        }
+
+        span {
+
+            font-size: 15px !important;
         }
 
         /* =============================================
@@ -371,7 +388,7 @@ selected = option_menu(
 
             "font-size": "20px",
 
-            "font-weight": "500",
+            "font-weight": "600",
         },
 
         "nav-link:hover": {
@@ -399,7 +416,7 @@ selected = option_menu(
 
             "color": "white",
 
-            "font-weight": "600",
+            "font-weight": "700",
 
             "border": "none",
 

@@ -9,8 +9,9 @@ Autor:
 
 Versão:
     1.0 - 12/05/2026
-    2.0 - 13/05/2026 - Adição de barras slime customizadas.
-    3.0 - 13/05/2026 - Adição de valores acima das barras.
+    2.0 - 13/05/2026 - Adição de valores acima das barras.
+    3.0 - 13/05/2026 - Remoção completa dos títulos internos dos gráficos.
+    4.0 - 13/05/2026 - Compatibilidade com versões antigas do Plotly.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -56,7 +57,7 @@ def bar_chart(
     data,
     x,
     y,
-    title
+    title=None
 ):
     """
     Descrição:
@@ -66,7 +67,6 @@ def bar_chart(
         data: DataFrame.
         x: Coluna eixo X.
         y: Coluna eixo Y.
-        title: Título gráfico.
 
     Retorno:
         Figura Plotly.
@@ -80,10 +80,14 @@ def bar_chart(
 
         y=y,
 
-        title=title,
-
         text_auto='.2s'
     )
+
+    # =====================================================
+    # REMOVE TÍTULO COMPLETAMENTE
+    # =====================================================
+
+    fig.layout.title = None
 
     # =====================================================
     # LAYOUT
@@ -95,7 +99,9 @@ def bar_chart(
 
         paper_bgcolor='rgba(0,0,0,0)',
 
-        margin=dict(t=80)
+        margin=dict(
+            t=60
+        )
     )
 
     # =====================================================
@@ -125,7 +131,7 @@ def line_chart(
     data,
     x,
     y,
-    title,
+    title=None,
     color=None
 ):
     """
@@ -136,7 +142,6 @@ def line_chart(
         data: DataFrame.
         x: Coluna eixo X.
         y: Coluna eixo Y.
-        title: Título gráfico.
         color: Agrupamento opcional.
 
     Retorno:
@@ -151,10 +156,18 @@ def line_chart(
 
         y=y,
 
-        color=color,
-
-        title=title
+        color=color
     )
+
+    # =====================================================
+    # REMOVE TÍTULO COMPLETAMENTE
+    # =====================================================
+
+    fig.layout.title = None
+
+    # =====================================================
+    # LAYOUT
+    # =====================================================
 
     fig.update_layout(
 
