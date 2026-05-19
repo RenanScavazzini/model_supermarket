@@ -13,6 +13,7 @@ Versão:
     2.0 - 12/05/2026 - Adição de novos indicadores, gráficos e melhorias na apresentação visual dos dados.
     3.0 - 13/05/2026 - Adição de slimes temáticos na visão geral.
     4.0 - 13/05/2026 - Adição das personagens Shion e Shuna na seção gráfica.
+    5.0 - 19/05/2026 - Refatoração completa para métricas dinâmicas nos gráficos.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -55,7 +56,11 @@ def render(
         'Renderizando página Overview'
     )
 
-    df = apply_filters(df)
+    # =====================================================
+    # FILTROS
+    # =====================================================
+
+    df, selected_metric = apply_filters(df)
 
     analyzer = SummaryAnalyzer(df)
 
@@ -75,7 +80,16 @@ def render(
 
     distinct_products = df['produto'].nunique()
 
-    max_invoice_value = df['valor_total_nota'].max()
+    max_invoice_value = (
+
+        df[
+            'valor_total_nota'
+        ]
+
+        .drop_duplicates()
+
+        .max()
+    )
 
     metric_cols = st.columns(
         [1.12, 0.2, 1, 1, 1, 1],
@@ -121,7 +135,7 @@ def render(
         {
             "image": "image/ui/slime4.png",
 
-            "label": "🛒 Qtde Produtos",
+            "label": "🛒 Produtos Distintos",
 
             "value":
             format_number(
@@ -211,7 +225,7 @@ def render(
     st.divider()
 
     # =====================================================
-    # ÁREA PRINCIPAL + SHION FIXA
+    # ÁREA PRINCIPAL + SHION
     # =====================================================
 
     main_area, shion_area = st.columns(
@@ -225,18 +239,14 @@ def render(
 
     with main_area:
 
-        # =================================================
-        # GRÁFICOS SUPERIORES
-        # =================================================
-
         top_left, top_right = st.columns(
             [1, 1],
             gap="large"
         )
 
-        # ================================================
-        # GASTOS POR SUPERMERCADO
-        # ================================================
+        # =================================================
+        # SUPERMERCADO
+        # =================================================
 
         with top_left:
 
@@ -244,28 +254,13 @@ def render(
                 "🏪 Gastos por Supermercado"
             )
 
-            spending_market = (
-
-                df
-
-                .groupby("supermercado")[
-
-                    "preco_total"
-                ]
-
-                .sum()
-
-                .reset_index()
-            )
-
             fig_market = bar_chart(
 
-                spending_market,
+                data=df,
 
                 x="supermercado",
 
-                y="preco_total",
-
+                metric=selected_metric
             )
 
             st.plotly_chart(
@@ -277,9 +272,9 @@ def render(
                 key="overview_market_chart"
             )
 
-        # ================================================
-        # GASTOS POR PERÍODO
-        # ================================================
+        # =================================================
+        # PERÍODO
+        # =================================================
 
         with top_right:
 
@@ -287,51 +282,13 @@ def render(
                 "🕒 Gastos por Período"
             )
 
-            spending_period = (
-
-                df
-
-                .groupby("periodo_dia")[
-                    "preco_total"
-                ]
-
-                .sum()
-
-                .reset_index()
-            )
-
-            order_period = [
-                'MANHA',
-                'TARDE',
-                'NOITE'
-            ]
-
-            spending_period['periodo_dia'] = pd.Categorical(
-
-                spending_period['periodo_dia'],
-
-                categories=order_period,
-
-                ordered=True
-            )
-
-            spending_period = (
-
-                spending_period
-
-                .sort_values(
-                    'periodo_dia'
-                )
-            )
-
             fig_period = bar_chart(
 
-                spending_period,
+                data=df,
 
                 x="periodo_dia",
 
-                y="preco_total",
-
+                metric=selected_metric
             )
 
             st.plotly_chart(
@@ -343,23 +300,15 @@ def render(
                 key="overview_period_chart"
             )
 
-        # =================================================
-        # DIVIDER
-        # =================================================
-
         st.divider()
 
         # =================================================
-        # TÍTULO CATEGORIA
+        # CATEGORIA
         # =================================================
 
         st.subheader(
             '📦 Gastos por Categoria'
         )
-
-        # =================================================
-        # GASTOS POR CATEGORIA
-        # =================================================
 
         category_left, category_right = st.columns(
             [0.18, 0.82],
@@ -380,37 +329,13 @@ def render(
 
         with category_right:
 
-            spending_category = (
-
-                df
-
-                .groupby('categoria_produto')[
-
-                    'preco_total'
-                ]
-
-                .sum()
-
-                .reset_index()
-
-                .sort_values(
-
-                    'preco_total',
-
-                    ascending=False
-                )
-
-                .head(20)
-            )
-
             fig_category = bar_chart(
 
-                spending_category,
+                data=df,
 
                 x='categoria_produto',
 
-                y='preco_total',
-
+                metric=selected_metric
             )
 
             st.plotly_chart(
@@ -423,7 +348,7 @@ def render(
             )
 
     # =====================================================
-    # SHION FIXA ATRAVESSANDO TUDO
+    # SHION
     # =====================================================
 
     with shion_area:
@@ -450,7 +375,7 @@ def render(
     )
 
     # =====================================================
-    # FERIADOS
+    # FERIADO
     # =====================================================
 
     with holiday_col:
@@ -459,26 +384,13 @@ def render(
             '🎉 Gastos em Feriados'
         )
 
-        spending_holiday = (
-
-            df
-
-            .groupby('feriado')[
-                'preco_total'
-            ]
-
-            .sum()
-
-            .reset_index()
-        )
-
         fig_holiday = bar_chart(
 
-            spending_holiday,
+            data=df,
 
             x='feriado',
 
-            y='preco_total'
+            metric=selected_metric
         )
 
         st.plotly_chart(
@@ -491,7 +403,7 @@ def render(
         )
 
     # =====================================================
-    # DIA DA SEMANA
+    # DIA SEMANA
     # =====================================================
 
     with weekday_col:
@@ -500,61 +412,13 @@ def render(
             '📅 Gastos por Dia da Semana'
         )
 
-        spending_weekday = (
-
-            df
-
-            .groupby('dia_semana')[
-                'preco_total'
-            ]
-
-            .sum()
-
-            .reset_index()
-        )
-
-        ordem_semana = [
-
-            'DOMINGO',
-
-            'SEGUNDA',
-
-            'TERCA',
-
-            'QUARTA',
-
-            'QUINTA',
-
-            'SEXTA',
-
-            'SABADO'
-        ]
-
-        spending_weekday['dia_semana'] = pd.Categorical(
-
-            spending_weekday['dia_semana'],
-
-            categories=ordem_semana,
-
-            ordered=True
-        )
-
-        spending_weekday = (
-
-            spending_weekday
-
-            .sort_values(
-                'dia_semana'
-            )
-        )
-
         fig_weekday = bar_chart(
 
-            spending_weekday,
+            data=df,
 
             x='dia_semana',
 
-            y='preco_total'
+            metric=selected_metric
         )
 
         st.plotly_chart(
@@ -594,7 +458,7 @@ def render(
     )
 
     # =====================================================
-    # ESTAÇÃO DO ANO
+    # ESTAÇÃO
     # =====================================================
 
     with season_col:
@@ -603,55 +467,13 @@ def render(
             '🍂 Gastos por Estação'
         )
 
-        spending_season = (
-
-            df
-
-            .groupby('estacao_ano')[
-                'preco_total'
-            ]
-
-            .sum()
-
-            .reset_index()
-        )
-
-        ordem_estacao = [
-
-            'VERAO',
-
-            'OUTONO',
-
-            'INVERNO',
-
-            'PRIMAVERA'
-        ]
-
-        spending_season['estacao_ano'] = pd.Categorical(
-
-            spending_season['estacao_ano'],
-
-            categories=ordem_estacao,
-
-            ordered=True
-        )
-
-        spending_season = (
-
-            spending_season
-
-            .sort_values(
-                'estacao_ano'
-            )
-        )
-
         fig_season = bar_chart(
 
-            spending_season,
+            data=df,
 
             x='estacao_ano',
 
-            y='preco_total'
+            metric=selected_metric
         )
 
         st.plotly_chart(
@@ -664,7 +486,7 @@ def render(
         )
 
     # =====================================================
-    # DIA CHUVOSO
+    # CHUVA
     # =====================================================
 
     with rain_col:
@@ -673,38 +495,13 @@ def render(
             '🌧️ Gastos em Dias Chuvosos'
         )
 
-        spending_rain = (
-
-            df
-
-            .groupby('dia_chuvoso')[
-                'preco_total'
-            ]
-
-            .sum()
-
-            .reset_index()
-        )
-
-        spending_rain['dia_chuvoso'] = (
-
-            spending_rain['dia_chuvoso']
-
-            .map({
-
-                True: 'SIM',
-
-                False: 'NAO'
-            })
-        )
-
         fig_rain = bar_chart(
 
-            spending_rain,
+            data=df,
 
             x='dia_chuvoso',
 
-            y='preco_total'
+            metric=selected_metric
         )
 
         st.plotly_chart(
@@ -717,7 +514,7 @@ def render(
         )
 
     # =====================================================
-    # CATEGORIA TEMPERATURA
+    # TEMPERATURA
     # =====================================================
 
     with temp_col:
@@ -726,57 +523,13 @@ def render(
             '🌡️ Gastos por Temperatura'
         )
 
-        spending_temp = (
-
-            df
-
-            .groupby('cat_temperatura')[
-                'preco_total'
-            ]
-
-            .sum()
-
-            .reset_index()
-        )
-
-        ordem_temp = [
-
-            'MUITO_FRIO',
-
-            'FRIO',
-
-            'AMENO',
-
-            'QUENTE',
-
-            'MUITO_QUENTE'
-        ]
-
-        spending_temp['cat_temperatura'] = pd.Categorical(
-
-            spending_temp['cat_temperatura'],
-
-            categories=ordem_temp,
-
-            ordered=True
-        )
-
-        spending_temp = (
-
-            spending_temp
-
-            .sort_values(
-                'cat_temperatura'
-            )
-        )
-
         fig_temp = bar_chart(
 
-            spending_temp,
+            data=df,
 
             x='cat_temperatura',
 
-            y='preco_total'
+            metric=selected_metric
         )
 
         st.plotly_chart(

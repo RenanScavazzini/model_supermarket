@@ -93,7 +93,7 @@ class ProductAnalyzer:
         return self.df[
 
             self.df[
-                'codigo_produto'
+                'cod_produto'
             ] == code
         ]
 
@@ -130,7 +130,7 @@ class ProductAnalyzer:
         codigos = sorted(
 
             df_product[
-                'codigo_produto'
+                'cod_produto'
             ]
 
             .astype(str)

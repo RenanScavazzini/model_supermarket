@@ -10,6 +10,7 @@ Autor:
 Versão:
     1.0 - 12/05/2026
     2.0 - 13/05/2026 - Adição de filtros dinâmicos e estilização visual.
+    3.0 - 19/05/2026 - Melhorias de performance, formatação e compatibilidade com filtros globais.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -26,8 +27,43 @@ from src.dashboard.components.filters import (
     apply_filters
 )
 
+
 logger = setup_logger(__name__)
 
+
+# ==========================================================
+# FORMATADOR BRASILEIRO
+# ==========================================================
+
+def br_number(
+    value
+):
+    """
+    Descrição:
+        Formata valores numéricos no padrão brasileiro.
+    """
+
+    try:
+
+        return (
+
+            f'{value:,.2f}'
+
+            .replace(',', 'X')
+
+            .replace('.', ',')
+
+            .replace('X', '.')
+        )
+
+    except Exception:
+
+        return value
+
+
+# ==========================================================
+# RENDER
+# ==========================================================
 
 def render(
     df: pd.DataFrame
@@ -45,17 +81,25 @@ def render(
         - Pandas Documentation.
     """
 
-    filtered_df = apply_filters(df)
-
     logger.info(
         'Renderizando página Database'
     )
+
+    # ======================================================
+    # FILTROS GLOBAIS
+    # ======================================================
+
+    filtered_df, _ = apply_filters(df)
 
     st.title(
         '🗄️ Database'
     )
 
     temp = filtered_df.copy()
+
+    # ======================================================
+    # FILTROS DINÂMICOS
+    # ======================================================
 
     st.subheader(
         '🔎 Filtros da Base'
@@ -72,34 +116,56 @@ def render(
 
     for column in selected_columns:
 
-        unique_values = (
+        try:
 
-            temp[column]
+            unique_values = (
 
-            .dropna()
+                temp[column]
 
-            .unique()
-        )
+                .dropna()
 
-        unique_values = sorted(
-            unique_values
-        )
+                .astype(str)
 
-        selected_values = st.multiselect(
+                .unique()
+            )
 
-            f'Filtrar {column}',
+            unique_values = sorted(
+                unique_values
+            )
 
-            options=unique_values,
+            selected_values = st.multiselect(
 
-            default=unique_values
-        )
+                f'Filtrar {column}',
 
-        temp = temp[
-            temp[column]
-            .isin(selected_values)
-        ]
+                options=unique_values,
+
+                default=unique_values
+            )
+
+            temp = temp[
+
+                temp[
+                    column
+                ]
+
+                .astype(str)
+
+                .isin(
+                    selected_values
+                )
+            ]
+
+        except Exception as error:
+
+            logger.warning(
+                f'Erro ao aplicar filtro na coluna {column}: {error}'
+            )
 
     st.divider()
+
+    # ======================================================
+    # BASE DE DADOS
+    # ======================================================
 
     st.subheader(
         '📄 Base de Dados'
@@ -107,47 +173,60 @@ def render(
 
     styled_df = temp.style.format({
 
-        'preco_unitario':
+        # ==================================================
+        # VALORES MONETÁRIOS
+        # ==================================================
 
-        lambda x:
-        f'{x:,.2f}'
-        .replace(',', 'X')
-        .replace('.', ',')
-        .replace('X', '.'),
+        'preco_unitario': br_number,
 
-        'preco_total':
+        'preco_total': br_number,
 
-        lambda x:
-        f'{x:,.2f}'
-        .replace(',', 'X')
-        .replace('.', ',')
-        .replace('X', '.'),
+        'valor_total_nota': br_number,
 
-        'quantidade':
+        'valor_total_tributos': br_number,
 
-        lambda x:
-        f'{x:,.2f}'
-        .replace(',', 'X')
-        .replace('.', ',')
-        .replace('X', '.'),
+        # ==================================================
+        # QUANTIDADE
+        # ==================================================
 
-        'valor_total_nota':
+        'quantidade': br_number,
 
-        lambda x:
-        f'{x:,.2f}'
-        .replace(',', 'X')
-        .replace('.', ',')
-        .replace('X', '.')
+        'qtd_total_nota': br_number,
+
+        # ==================================================
+        # TEMPERATURA
+        # ==================================================
+
+        'temperatura_max': br_number,
+
+        'temperatura_min': br_number,
+
+        'temperatura_media': br_number,
+
+        # ==================================================
+        # CHUVA
+        # ==================================================
+
+        'chuva_mm': br_number
     })
+
+    # ======================================================
+    # LAYOUT
+    # ======================================================
 
     col_image, col_table = st.columns(
         [0.14, 0.86],
         gap="large"
     )
 
+    # ======================================================
+    # IMAGEM
+    # ======================================================
+
     with col_image:
 
         diablo_path = (
+
             Path(
                 "image/ui/diablo.png"
             )
@@ -157,6 +236,10 @@ def render(
             str(diablo_path),
             width=180
         )
+
+    # ======================================================
+    # TABELA
+    # ======================================================
 
     with col_table:
 
@@ -178,8 +261,11 @@ def render(
         )
 
         st.dataframe(
+
             styled_df,
+
             use_container_width=True,
+
             height=650
         )
 

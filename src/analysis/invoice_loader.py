@@ -110,37 +110,55 @@ class InvoiceLoader:
 
         column_mapping = {
 
-            'CHAVE_ANONIMIZADA': 'nota_fiscal_id',
+            'chave_anonimizada': 'chave_anonimizada',
 
-            'DATA': 'data_hora',
+            'data_hora': 'data_hora',
 
-            'MES_ANO': 'mes_ano',
+            'mes_ano': 'mes_ano',
 
-            'PERIODO': 'periodo_dia',
+            'dia_semana': 'dia_semana',
 
-            'CNPJ': 'cnpj',
+            'feriado': 'feriado',
 
-            'SUPERMERCADO': 'supermercado',
+            'estacao_ano': 'estacao_ano',
 
-            'QTDE_TOTAL_NOTA': 'qtde_total_nota',
+            'temperatura_max': 'temperatura_max',
 
-            'VALOR_TOTAL_NOTA': 'valor_total_nota',
+            'temperatura_min': 'temperatura_min',
 
-            'VALOR_TOTAL_TRIBUTOS': 'valor_total_tributos',
+            'temperatura_media': 'temperatura_media',
 
-            'COD_PRODUTO': 'codigo_produto',
+            'chuva_mm': 'chuva_mm',
 
-            'CAT_PRODUTO': 'categoria_produto',
+            'cat_temperatura': 'cat_temperatura',
 
-            'PRODUTO': 'produto',
+            'dia_chuvoso': 'dia_chuvoso',
 
-            'UNIDADE': 'unidade',
+            'periodo_dia': 'periodo_dia',
 
-            'QTDE': 'quantidade',
+            'cnpj': 'cnpj',
 
-            'VALOR_PRODUTO': 'preco_unitario',
+            'supermercado': 'supermercado',
 
-            'VALOR_TOTAL_PRODUTO': 'preco_total'
+            'qtd_total_nota': 'qtd_total_nota',
+
+            'valor_total_nota': 'valor_total_nota',
+
+            'valor_total_tributos': 'valor_total_tributos',
+
+            'cod_produto': 'cod_produto',
+
+            'categoria_produto': 'categoria_produto',
+
+            'produto': 'produto',
+
+            'unidade': 'unidade',
+
+            'quantidade': 'quantidade',
+
+            'preco_unitario': 'preco_unitario',
+
+            'preco_total': 'preco_total'
         }
 
         existing_mapping = {

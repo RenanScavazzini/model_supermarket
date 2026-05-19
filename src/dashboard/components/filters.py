@@ -10,6 +10,7 @@ Versão:
     1.0 - 12/05/2026
     2.0 - 12/05/2026 - Adição de novos filtros e melhorias na lógica de aplicação dos filtros.
     3.0 - 19/05/2026 - Inclusão de filtros climáticos e temporais.
+    4.0 - 19/05/2026 - Inclusão de métricas globais de visualização: Valor Total Tributos, Correção das métricas, Melhor arquitetura de filtros
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -19,9 +20,29 @@ import pandas as pd
 import streamlit as st
 
 
+# ==========================================================
+# CONFIGURAÇÃO DAS MÉTRICAS
+# ==========================================================
+
+METRIC_OPTIONS = {
+
+    'Preço Total': 'preco_total',
+
+    'Quantidade de Registros': 'quantidade',
+
+    'Quantidade de Notas': 'qtd_notas',
+
+    'Valor Total Tributos': 'valor_total_tributos'
+}
+
+
+# ==========================================================
+# FUNÇÃO PRINCIPAL
+# ==========================================================
+
 def apply_filters(
     df: pd.DataFrame
-) -> pd.DataFrame:
+) -> tuple:
 
     temp = df.copy()
 
@@ -29,9 +50,9 @@ def apply_filters(
         'Filtros'
     )
 
-    # ==========================================================
+    # ======================================================
     # LISTAS DE FILTROS
-    # ==========================================================
+    # ======================================================
 
     anos = sorted(
         temp['ano'].dropna().unique()
@@ -73,9 +94,26 @@ def apply_filters(
         temp['dia_chuvoso'].dropna().unique()
     )
 
-    # ==========================================================
+    # ======================================================
+    # MÉTRICA GLOBAL
+    # ======================================================
+
+    metric_filter = st.sidebar.selectbox(
+
+        'Métrica do Gráfico',
+
+        list(
+            METRIC_OPTIONS.keys()
+        )
+    )
+
+    selected_metric = METRIC_OPTIONS[
+        metric_filter
+    ]
+
+    # ======================================================
     # COMPONENTES SIDEBAR
-    # ==========================================================
+    # ======================================================
 
     ano_filter = st.sidebar.multiselect(
         'Ano',
@@ -127,9 +165,9 @@ def apply_filters(
         dias_chuvosos
     )
 
-    # ==========================================================
+    # ======================================================
     # APLICAÇÃO DOS FILTROS
-    # ==========================================================
+    # ======================================================
 
     if ano_filter:
 
@@ -211,4 +249,11 @@ def apply_filters(
             )
         ]
 
-    return temp
+    # ======================================================
+    # RETORNO
+    # ======================================================
+
+    return (
+        temp,
+        selected_metric
+    )

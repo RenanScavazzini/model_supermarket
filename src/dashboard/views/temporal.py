@@ -13,6 +13,7 @@ Versão:
     2.0 - 12/05/2026 - Adição de novas visualizações e melhorias na interatividade dos gráficos.
     3.0 - 13/05/2026 - Adição dos personagens Souei, Benimaru e Ranga.
     4.0 - 13/05/2026 - Reorganização da ordem dos gráficos e melhoria da evolução diária.
+    5.0 - 19/05/2026 - Refatoração completa para métricas dinâmicas.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -21,9 +22,9 @@ Copyright:
 import streamlit as st
 import pandas as pd
 
-from src.analysis.temporal_analyzer import TemporalAnalyzer
-
-from src.dashboard.components.filters import apply_filters
+from src.dashboard.components.filters import (
+    apply_filters
+)
 
 from src.dashboard.components.charts import (
     line_chart,
@@ -51,9 +52,11 @@ def render(
         'Renderizando página Temporal'
     )
 
-    df = apply_filters(df)
+    # =====================================================
+    # FILTROS
+    # =====================================================
 
-    analyzer = TemporalAnalyzer(df)
+    df, metric = apply_filters(df)
 
     st.title(
         '📅 Análises Temporais'
@@ -64,17 +67,12 @@ def render(
     # =====================================================
 
     st.subheader(
-        '📊 Evolução Anual dos Gastos'
+        '📊 Evolução Anual'
     )
 
     benimaru_col, yearly_chart_col = st.columns(
         [0.16, 0.84],
         gap="medium"
-    )
-
-    yearly = (
-        analyzer
-        .yearly_spending()
     )
 
     with benimaru_col:
@@ -92,14 +90,20 @@ def render(
     with yearly_chart_col:
 
         fig_yearly = bar_chart(
-            yearly,
+
+            data=df,
+
             x='ano',
-            y='preco_total',
+
+            metric=metric
         )
 
         st.plotly_chart(
+
             fig_yearly,
+
             use_container_width=True,
+
             key='temporal_year_chart'
         )
 
@@ -110,30 +114,31 @@ def render(
     # =====================================================
 
     monthly_chart_col, ranga_col = st.columns(
-        [0.7, 0.3],
+        [0.70, 0.30],
         gap="medium"
-    )
-
-    monthly = (
-        analyzer
-        .monthly_spending()
     )
 
     with monthly_chart_col:
 
         st.subheader(
-            '📈 Evolução Mensal dos Gastos'
+            '📈 Evolução Mensal'
         )
 
         fig_monthly = line_chart(
-            monthly,
-            x='mes',
-            y='preco_total',
+
+            data=df,
+
+            x='mes_ano',
+
+            metric=metric
         )
 
         st.plotly_chart(
+
             fig_monthly,
+
             use_container_width=True,
+
             key='temporal_month_chart'
         )
 
@@ -156,7 +161,7 @@ def render(
     # =====================================================
 
     st.subheader(
-        '📆 Evolução Diária dos Gastos'
+        '📆 Evolução Diária'
     )
 
     souei_col, daily_chart_col = st.columns(
@@ -164,35 +169,38 @@ def render(
         gap="medium"
     )
 
+    # =====================================================
+    # PREPARAÇÃO DATAFRAME DIÁRIO
+    # =====================================================
+
     daily_temp = df.copy()
 
     daily_temp['dia'] = (
-        daily_temp['data_hora']
+
+        daily_temp[
+            'data_hora'
+        ]
+
         .dt.date
-    )
-
-    daily_spending = (
-
-        daily_temp
-
-        .groupby('dia')['preco_total']
-
-        .sum()
-
-        .reset_index()
     )
 
     with daily_chart_col:
 
         fig_daily = line_chart(
-            daily_spending,
+
+            data=daily_temp,
+
             x='dia',
-            y='preco_total',
+
+            metric=metric
         )
 
         st.plotly_chart(
+
             fig_daily,
+
             use_container_width=True,
+
             key='temporal_daily_chart'
         )
 
@@ -207,6 +215,8 @@ def render(
             'image/ui/souei.png',
             width=240
         )
+
+    st.divider()
 
     logger.info(
         'Página Temporal renderizada com sucesso'

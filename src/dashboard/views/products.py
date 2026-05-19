@@ -15,6 +15,7 @@ Versão:
     3.0 - 13/05/2026 - Adição do mascote Veldora na seção de resumo.
     4.0 - 13/05/2026 - Integração com filtros globais do dashboard.
     5.0 - 13/05/2026 - Adição dos personagens Gobta, Ramiris e Milim.
+    6.0 - 19/05/2026 - Compatibilidade com métricas dinâmicas.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -31,9 +32,13 @@ from src.dashboard.components.filters import (
     apply_filters
 )
 
-from src.analysis.product_analyzer import ProductAnalyzer
+from src.analysis.product_analyzer import (
+    ProductAnalyzer
+)
 
-from src.core.logger import setup_logger
+from src.core.logger import (
+    setup_logger
+)
 
 from src.utils.formatters import (
     format_currency,
@@ -63,7 +68,7 @@ def render(
     # FILTROS GLOBAIS
     # =====================================================
 
-    filtered_df = apply_filters(df)
+    filtered_df, metric = apply_filters(df)
 
     st.title(
         '🛒 Produtos'
@@ -114,17 +119,35 @@ def render(
 
     result = pd.DataFrame()
 
+    # =====================================================
+    # PESQUISA POR NOME
+    # =====================================================
+
     if product_name:
 
         result = analyzer.search_product(
             product_name
         )
 
+    # =====================================================
+    # PESQUISA POR CÓDIGO
+    # =====================================================
+
     elif product_code:
 
-        result = analyzer.search_product_code(
-            int(product_code)
-        )
+        try:
+
+            result = analyzer.search_product_code(
+                int(product_code)
+            )
+
+        except ValueError:
+
+            st.warning(
+                'Código inválido.'
+            )
+
+            return
 
     # =====================================================
     # RESULTADOS
@@ -144,8 +167,11 @@ def render(
         )
 
         produtos_selecionados = st.multiselect(
+
             'Filtrar produtos encontrados',
+
             produtos_disponiveis,
+
             default=produtos_disponiveis
         )
 
@@ -189,6 +215,10 @@ def render(
 
             col1, col2, col3 = st.columns(3)
 
+            # =================================================
+            # COLUNA 1
+            # =================================================
+
             with col1:
 
                 st.metric(
@@ -210,6 +240,10 @@ def render(
                     '📏 Unidade(s)',
                     summary['Unidade']
                 )
+
+            # =================================================
+            # COLUNA 2
+            # =================================================
 
             with col2:
 
@@ -240,6 +274,10 @@ def render(
                         summary['Valor máximo']
                     )
                 )
+
+            # =================================================
+            # COLUNA 3
+            # =================================================
 
             with col3:
 
@@ -298,7 +336,7 @@ def render(
 
             'produto',
 
-            'codigo_produto',
+            'cod_produto',
 
             'preco_unitario',
 
@@ -317,20 +355,27 @@ def render(
                 display_columns
             ]
 
+            .sort_values(
+                'data_hora',
+                ascending=False
+            )
+
             .style
 
             .format({
 
-                'preco_unitario': '{:,.2f}',
+                'preco_unitario': 'R$ {:,.2f}',
 
                 'quantidade': '{:,.2f}',
 
-                'preco_total': '{:,.2f}'
+                'preco_total': 'R$ {:,.2f}'
             })
         )
 
         st.dataframe(
+
             styled_df,
+
             use_container_width=True
         )
 
@@ -343,15 +388,15 @@ def render(
         st.subheader(
             '📈 Histórico de Preços'
         )
-        
+
         milim_col, price_chart_col = st.columns(
             [0.2, 0.8],
             gap="medium"
         )
 
-        # =================================================
+        # =====================================================
         # MILIM
-        # =================================================
+        # =====================================================
 
         with milim_col:
 
@@ -365,24 +410,35 @@ def render(
                 width=245
             )
 
-        # =================================================
+        # =====================================================
         # GRÁFICO
-        # =================================================
+        # =====================================================
 
         with price_chart_col:
 
             fig = line_chart(
-                result,
+
+                data=result,
+
                 x='data_hora',
-                y='preco_unitario',
+
+                metric=metric,
+
                 color='produto'
             )
 
             st.plotly_chart(
+
                 fig,
+
                 use_container_width=True,
+
                 key='products_price_history_chart'
             )
+
+    # =====================================================
+    # SEM RESULTADOS
+    # =====================================================
 
     else:
 

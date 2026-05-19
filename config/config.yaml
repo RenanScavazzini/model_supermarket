@@ -13,7 +13,7 @@ data:
 # Configurações de busca de dados reais
 data_fetching:
   enabled: false                # FETCH_REAL_DATA - Ativa busca no site da Fazenda
-  enabled_trat: true          # FETCH_REAL_DATA_TRAT - Ativa tratamento de dados após busca
+  enabled_trat: false          # FETCH_REAL_DATA_TRAT - Ativa tratamento de dados após busca
   delay_between_requests: 1.0  # Delay em segundos entre requisições
 
 external_data:
