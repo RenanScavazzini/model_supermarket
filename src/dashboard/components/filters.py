@@ -28,7 +28,7 @@ METRIC_OPTIONS = {
 
     'Preço Total': 'preco_total',
 
-    'Quantidade de Registros': 'quantidade',
+    'Quantidade de Produtos': 'quantidade',
 
     'Quantidade de Notas': 'qtd_notas',
 

@@ -51,6 +51,7 @@ def run_nfce_fetch(
     Versão:
         1.0 - 05/05/2026
         2.0 - 18/05/2026 - Correção do de-para da chave
+        3.0 - 19/05/2026 - Correção na quantidade onde unidade é KG
 
     Copyright:
         Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -131,8 +132,29 @@ def run_nfce_fetch(
             })
 
             # 🔹 Conversões numéricas
+            df_nota['QTDE'] = (
+
+                df_nota['QTDE']
+
+                .astype(str)
+
+                .str.upper()
+
+                .str.strip()
+
+                .str.replace('\xa0', '', regex=False)
+
+                .str.replace('KG', '', regex=False)
+
+                .str.replace(',', '.', regex=False)
+
+                .str.replace(r'[^0-9\.]', '', regex=True)
+            )
+
             df_nota['QTDE'] = pd.to_numeric(
+
                 df_nota['QTDE'],
+
                 errors='coerce'
             )
 
@@ -203,11 +225,11 @@ def run_nfce_fetch(
                     quantidade_total = int(str(quantidade_total))
 
                 else:
-                    quantidade_total = int(df_nota['QTDE'].sum())
+                    quantidade_total = round(df_nota['QTDE'].sum(), 2)
 
             except Exception:
 
-                quantidade_total = int(df_nota['QTDE'].sum())
+                quantidade_total = round(df_nota['QTDE'].sum(), 2)
 
             df_nota['QTDE_TOTAL_NOTA'] = quantidade_total
 

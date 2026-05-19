@@ -16,6 +16,8 @@ Versão:
     5.0 - 19/05/2026 - Refatoração completa para métricas dinâmicas.
     6.0 - 19/05/2026 - Correção de ordenação temporal.
     7.0 - 19/05/2026 - Adição de Top N em gráficos categóricos.
+    8.0 - 19/05/2026 - Correção da métrica de quantidade
+                         para soma real de produtos.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -51,7 +53,7 @@ METRIC_CONFIG = {
 
     'quantidade': {
 
-        'label': 'Quantidade de Registros',
+        'label': 'Quantidade de Produtos',
 
         'is_currency': False
     },
@@ -146,14 +148,14 @@ def apply_brazilian_format(
 
             yaxis=dict(
 
-                tickformat=',.0f'
+                tickformat=',.2f'
             )
         )
 
         fig.update_traces(
 
             hovertemplate=
-            '%{y:,.0f}<extra></extra>'
+            '%{y:,.2f}<extra></extra>'
         )
 
     return fig
@@ -232,7 +234,7 @@ def prepare_metric_data(
         )
 
     # ======================================================
-    # QUANTIDADE
+    # QUANTIDADE PRODUTOS
     # ======================================================
 
     elif metric == 'quantidade':
@@ -241,9 +243,11 @@ def prepare_metric_data(
 
             data
 
-            .groupby(group_cols)
+            .groupby(group_cols)[
+                'quantidade'
+            ]
 
-            .size()
+            .sum()
 
             .reset_index(
                 name='valor'
@@ -390,7 +394,7 @@ def bar_chart(
             .apply(
                 lambda x: format_number(
                     x,
-                    0
+                    2
                 )
             )
         )
