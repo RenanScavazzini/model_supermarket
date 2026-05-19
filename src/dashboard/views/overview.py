@@ -438,6 +438,372 @@ def render(
             width=340
         )
 
+    # =====================================================
+    # FERIADO + DIA SEMANA
+    # =====================================================
+
+    st.divider()
+
+    holiday_col, weekday_col, hakurou_col = st.columns(
+        [0.25, 0.5, 0.20],
+        gap="medium"
+    )
+
+    # =====================================================
+    # FERIADOS
+    # =====================================================
+
+    with holiday_col:
+
+        st.subheader(
+            '🎉 Gastos em Feriados'
+        )
+
+        spending_holiday = (
+
+            df
+
+            .groupby('feriado')[
+                'preco_total'
+            ]
+
+            .sum()
+
+            .reset_index()
+        )
+
+        fig_holiday = bar_chart(
+
+            spending_holiday,
+
+            x='feriado',
+
+            y='preco_total'
+        )
+
+        st.plotly_chart(
+
+            fig_holiday,
+
+            use_container_width=True,
+
+            key='overview_holiday_chart'
+        )
+
+    # =====================================================
+    # DIA DA SEMANA
+    # =====================================================
+
+    with weekday_col:
+
+        st.subheader(
+            '📅 Gastos por Dia da Semana'
+        )
+
+        spending_weekday = (
+
+            df
+
+            .groupby('dia_semana')[
+                'preco_total'
+            ]
+
+            .sum()
+
+            .reset_index()
+        )
+
+        ordem_semana = [
+
+            'DOMINGO',
+
+            'SEGUNDA',
+
+            'TERCA',
+
+            'QUARTA',
+
+            'QUINTA',
+
+            'SEXTA',
+
+            'SABADO'
+        ]
+
+        spending_weekday['dia_semana'] = pd.Categorical(
+
+            spending_weekday['dia_semana'],
+
+            categories=ordem_semana,
+
+            ordered=True
+        )
+
+        spending_weekday = (
+
+            spending_weekday
+
+            .sort_values(
+                'dia_semana'
+            )
+        )
+
+        fig_weekday = bar_chart(
+
+            spending_weekday,
+
+            x='dia_semana',
+
+            y='preco_total'
+        )
+
+        st.plotly_chart(
+
+            fig_weekday,
+
+            use_container_width=True,
+
+            key='overview_weekday_chart'
+        )
+
+    # =====================================================
+    # HAKUROU
+    # =====================================================
+
+    with hakurou_col:
+
+        st.markdown(
+            "<div style='height:20px'></div>",
+            unsafe_allow_html=True
+        )
+
+        st.image(
+            'image/ui/hakurou.png',
+            width=200
+        )
+
+    # =====================================================
+    # ESTAÇÃO + CHUVA + TEMPERATURA
+    # =====================================================
+
+    st.divider()
+
+    season_col, rain_col, temp_col, kurobee_col = st.columns(
+        [0.28, 0.28, 0.28, 0.16],
+        gap="medium"
+    )
+
+    # =====================================================
+    # ESTAÇÃO DO ANO
+    # =====================================================
+
+    with season_col:
+
+        st.subheader(
+            '🍂 Gastos por Estação'
+        )
+
+        spending_season = (
+
+            df
+
+            .groupby('estacao_ano')[
+                'preco_total'
+            ]
+
+            .sum()
+
+            .reset_index()
+        )
+
+        ordem_estacao = [
+
+            'VERAO',
+
+            'OUTONO',
+
+            'INVERNO',
+
+            'PRIMAVERA'
+        ]
+
+        spending_season['estacao_ano'] = pd.Categorical(
+
+            spending_season['estacao_ano'],
+
+            categories=ordem_estacao,
+
+            ordered=True
+        )
+
+        spending_season = (
+
+            spending_season
+
+            .sort_values(
+                'estacao_ano'
+            )
+        )
+
+        fig_season = bar_chart(
+
+            spending_season,
+
+            x='estacao_ano',
+
+            y='preco_total'
+        )
+
+        st.plotly_chart(
+
+            fig_season,
+
+            use_container_width=True,
+
+            key='overview_season_chart'
+        )
+
+    # =====================================================
+    # DIA CHUVOSO
+    # =====================================================
+
+    with rain_col:
+
+        st.subheader(
+            '🌧️ Gastos em Dias Chuvosos'
+        )
+
+        spending_rain = (
+
+            df
+
+            .groupby('dia_chuvoso')[
+                'preco_total'
+            ]
+
+            .sum()
+
+            .reset_index()
+        )
+
+        spending_rain['dia_chuvoso'] = (
+
+            spending_rain['dia_chuvoso']
+
+            .map({
+
+                True: 'SIM',
+
+                False: 'NAO'
+            })
+        )
+
+        fig_rain = bar_chart(
+
+            spending_rain,
+
+            x='dia_chuvoso',
+
+            y='preco_total'
+        )
+
+        st.plotly_chart(
+
+            fig_rain,
+
+            use_container_width=True,
+
+            key='overview_rain_chart'
+        )
+
+    # =====================================================
+    # CATEGORIA TEMPERATURA
+    # =====================================================
+
+    with temp_col:
+
+        st.subheader(
+            '🌡️ Gastos por Temperatura'
+        )
+
+        spending_temp = (
+
+            df
+
+            .groupby('cat_temperatura')[
+                'preco_total'
+            ]
+
+            .sum()
+
+            .reset_index()
+        )
+
+        ordem_temp = [
+
+            'MUITO_FRIO',
+
+            'FRIO',
+
+            'AMENO',
+
+            'QUENTE',
+
+            'MUITO_QUENTE'
+        ]
+
+        spending_temp['cat_temperatura'] = pd.Categorical(
+
+            spending_temp['cat_temperatura'],
+
+            categories=ordem_temp,
+
+            ordered=True
+        )
+
+        spending_temp = (
+
+            spending_temp
+
+            .sort_values(
+                'cat_temperatura'
+            )
+        )
+
+        fig_temp = bar_chart(
+
+            spending_temp,
+
+            x='cat_temperatura',
+
+            y='preco_total'
+        )
+
+        st.plotly_chart(
+
+            fig_temp,
+
+            use_container_width=True,
+
+            key='overview_temp_chart'
+        )
+
+    # =====================================================
+    # KUROBEE
+    # =====================================================
+
+    with kurobee_col:
+
+        st.markdown(
+            "<div style='height:140px'></div>",
+            unsafe_allow_html=True
+        )
+
+        st.image(
+            'image/ui/kurobee.png',
+            width=200
+        )
+
     logger.info(
         'Página Overview renderizada com sucesso'
     )

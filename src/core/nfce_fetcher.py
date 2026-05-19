@@ -5,6 +5,11 @@ from pathlib import Path
 from nfceget import app
 import unicodedata
 
+from src.external.weather import (
+    download_weather_data,
+    load_weather_data
+)
+
 
 def run_nfce_fetch(
     fetch_enabled: bool,
@@ -202,8 +207,12 @@ def run_nfce_fetch(
 
 def process_base(
     fetch_enabled: bool,
-    df_fetched: pd.DataFrame, 
-    raw_path: Path
+    df_fetched: pd.DataFrame,
+    raw_path: Path,
+    weather_enabled: bool,
+    weather_output_path: str,
+    latitude: float,
+    longitude: float
 ) -> pd.DataFrame:
     """
     Descrição:
@@ -218,12 +227,16 @@ def process_base(
             anteriormente (run_nfce_fetch).
         raw_path (Path): Caminho do arquivo .xlsx onde a base tratada será salva
             ou lida caso fetch_enabled seja False.
+        weather_enabled (bool): Habilita integração com clima.
+        weather_output_path (str): Caminho parquet da base climática.
+        latitude (float): Latitude da localização.
+        longitude (float): Longitude da localização.
 
     Retorno:
         pd.DataFrame
 
     Referências:
-        ---
+    ---
 
     Autor:
         Renan Douglas Floriano Scavazzini
@@ -231,147 +244,705 @@ def process_base(
 
     Versão:
         1.0 - 05/05/2026
-        1.1 - 11/05/2026 - Adição de padronização do nome dos produtos (associar maior código ao nome mais recente)
+        2.0 - 18/05/2026 - Adição de integração com dados climáticos históricos.
 
     Copyright:
         Copyright (c) 2026 Renan Douglas Floriano Scavazzini
     """
+
+    import holidays
+    import unicodedata
+
     print(f"Configuração de busca (nfceget): FETCH_REAL_DATA={fetch_enabled}")
-    # 🔹 MODO LEITURA (sem processamento)
+
+    # =====================================================
+    # MODO LEITURA
+    # =====================================================
+
     if not fetch_enabled:
+
         print(f"ℹ Lendo base já processada: {raw_path}")
+
         if raw_path.exists():
+
             return pd.read_excel(raw_path)
+
         print("⚠ Arquivo não encontrado")
+
         return pd.DataFrame()
-    # 🔹 MODO PROCESSAMENTO
+
+    # =====================================================
+    # MODO PROCESSAMENTO
+    # =====================================================
+
     df = df_fetched.copy()
-    # 🔹 1. FILTRO CNPJ + NORMALIZAÇÃO SUPERMERCADO
+
+    # =====================================================
+    # FILTRO CNPJ + NORMALIZAÇÃO
+    # =====================================================
+
     cnpj_map = {
+
         "76.189.406/0034-94": "CONDOR",
+
         "76.430.438/0070-01": "MAX",
+
         "06.057.223/0367-96": "ASSAI",
     }
+
     df = df[df["CNPJ"].isin(cnpj_map.keys())].copy()
+
     print("✅ CNPJ filtrados:", df["CNPJ"].nunique())
+
     df["SUPERMERCADO"] = df["CNPJ"].map(cnpj_map)
-    print("✅ Supermercados normalizados:", df["SUPERMERCADO"].nunique())
-    # 🔹 2. DATA → MES_ANO + PERIODO
+
+    print(
+        "✅ Supermercados normalizados:",
+        df["SUPERMERCADO"].nunique()
+    )
+
+    # =====================================================
+    # DATA
+    # =====================================================
+
     df["DATA"] = pd.to_datetime(
+
         df["DATA"],
+
         format="%d/%m/%Y %H:%M:%S",
+
         errors="coerce"
     )
+
     df["MES_ANO"] = df["DATA"].dt.strftime("%Y%m")
-    print("✅ Datas convertidas, meses/anos únicos:", df["MES_ANO"].nunique())
+
+    print(
+        "✅ Datas convertidas, meses/anos únicos:",
+        df["MES_ANO"].nunique()
+    )
+
+    # =====================================================
+    # PERÍODO
+    # =====================================================
+
     def classificar_periodo(dt):
+
         h = dt.hour
+
         if 0 <= h < 5:
+
             return "MADRUGADA"
+
         elif 5 <= h < 12:
+
             return "MANHA"
+
         elif 12 <= h < 18:
+
             return "TARDE"
+
         else:
+
             return "NOITE"
-    df["PERIODO"] = df["DATA"].apply(classificar_periodo)
-    print("✅ Períodos classificados:", df["PERIODO"].nunique())
-    # 🔹 3. PADRONIZAÇÃO PRODUTO
+
+    df["PERIODO"] = df["DATA"].apply(
+        classificar_periodo
+    )
+
+    print(
+        "✅ Períodos classificados:",
+        df["PERIODO"].nunique()
+    )
+
+    # =====================================================
+    # DIA DA SEMANA
+    # =====================================================
+
+    dias_semana = {
+
+        0: 'SEGUNDA',
+
+        1: 'TERCA',
+
+        2: 'QUARTA',
+
+        3: 'QUINTA',
+
+        4: 'SEXTA',
+
+        5: 'SABADO',
+
+        6: 'DOMINGO'
+    }
+
+    df['DIA_SEMANA'] = (
+
+        df['DATA']
+
+        .dt.dayofweek
+
+        .map(dias_semana)
+    )
+
+    # =====================================================
+    # FERIADOS PARANÁ
+    # =====================================================
+
+    br_holidays = holidays.Brazil(
+        subdiv='PR'
+    )
+
+    df['FERIADO'] = (
+
+        df['DATA']
+
+        .dt.date
+
+        .apply(
+
+            lambda x:
+
+            'SIM'
+
+            if x in br_holidays
+
+            else 'NAO'
+        )
+    )
+
+    print("✅ Features temporais criadas")
+
+    # =====================================================
+    # ESTAÇÃO DO ANO
+    # =====================================================
+
+    def classificar_estacao(data):
+
+        mes = data.month
+
+        dia = data.day
+
+        # =============================================
+        # VERÃO
+        # =============================================
+
+        if (
+
+            (mes == 12 and dia >= 21)
+
+            or mes in [1, 2]
+
+            or (mes == 3 and dia < 20)
+
+        ):
+
+            return "VERAO"
+
+        # =============================================
+        # OUTONO
+        # =============================================
+
+        elif (
+
+            (mes == 3 and dia >= 20)
+
+            or mes in [4, 5]
+
+            or (mes == 6 and dia < 21)
+
+        ):
+
+            return "OUTONO"
+
+        # =============================================
+        # INVERNO
+        # =============================================
+
+        elif (
+
+            (mes == 6 and dia >= 21)
+
+            or mes in [7, 8]
+
+            or (mes == 9 and dia < 23)
+
+        ):
+
+            return "INVERNO"
+
+        # =============================================
+        # PRIMAVERA
+        # =============================================
+
+        else:
+
+            return "PRIMAVERA"
+
+    df["ESTACAO_ANO"] = (
+
+        df["DATA"]
+
+        .apply(classificar_estacao)
+    )
+
+    ordem_estacao = [
+
+        "VERAO",
+
+        "OUTONO",
+
+        "INVERNO",
+
+        "PRIMAVERA"
+    ]
+
+    df["ESTACAO_ANO"] = pd.Categorical(
+
+        df["ESTACAO_ANO"],
+
+        categories=ordem_estacao,
+
+        ordered=True
+    )
+
+    print(
+        "✅ Estação do ano criada"
+    )
+
+    # =====================================================
+    # WEATHER FEATURES
+    # =====================================================
+
+    if weather_enabled:
+
+        print("🌦 Processando dados climáticos...")
+
+        # =================================================
+        # DOWNLOAD WEATHER
+        # =================================================
+
+        start_date = (
+
+            df["DATA"]
+
+            .min()
+
+            .strftime("%Y-%m-%d")
+        )
+
+        end_date = (
+
+            df["DATA"]
+
+            .max()
+
+            .strftime("%Y-%m-%d")
+        )
+
+        weather_df = download_weather_data(
+
+            start_date=start_date,
+
+            end_date=end_date,
+
+            latitude=latitude,
+
+            longitude=longitude,
+
+            output_path=weather_output_path
+        )
+
+        # =================================================
+        # MERGE WEATHER
+        # =================================================
+
+        df["DATA_DIA"] = (
+
+            df["DATA"]
+
+            .dt.normalize()
+        )
+
+        weather_df["DATA_DIA"] = (
+
+            weather_df["DATA"]
+
+            .dt.normalize()
+        )
+
+        weather_columns = [
+
+            "DATA_DIA",
+
+            "TEMPERATURA_MAX",
+
+            "TEMPERATURA_MIN",
+
+            "TEMPERATURA_MEDIA",
+
+            "CHUVA_MM",
+
+            "CAT_TEMPERATURA",
+
+            "DIA_CHUVOSO"
+        ]
+
+        df = df.merge(
+
+            weather_df[
+                weather_columns
+            ],
+
+            on="DATA_DIA",
+
+            how="left"
+        )
+
+        print(
+            "✅ Features climáticas adicionadas"
+        )
+
+    # =====================================================
+    # PADRONIZAÇÃO PRODUTO
+    # =====================================================
+
     df = df.sort_values("DATA")
+
     produto_map = (
+
         df.groupby("COD_PRODUTO")
+
         .last()["PRODUTO"]
+
         .to_dict()
     )
-    df["PRODUTO"] = df["COD_PRODUTO"].map(produto_map)
-    print("✅ Produtos padronizados:", df["PRODUTO"].nunique())
-    # 🔹 4. CATEGORIZAÇÃO
+
+    df["PRODUTO"] = (
+
+        df["COD_PRODUTO"]
+
+        .map(produto_map)
+    )
+
+    print(
+        "✅ Produtos padronizados:",
+        df["PRODUTO"].nunique()
+    )
+
+    # =====================================================
+    # REMOVER ACENTOS
+    # =====================================================
+
     def remover_acentos(texto):
+
         return ''.join(
-            c for c in unicodedata.normalize('NFD', str(texto))
+
+            c for c in unicodedata.normalize(
+                'NFD',
+                str(texto)
+            )
+
             if unicodedata.category(c) != 'Mn'
         )
+
+    # =====================================================
+    # CATEGORIZAÇÃO
+    # =====================================================
+
     categoria_produtos = {
-        "mercearia": ["ARROZ","FEIJAO","FARINHA","TRIGO","ARROZ INTEGRAL","FEIJAO PRETO","FEIJ","ACUCAR","ACUC","SUGAR","OVO","OLEO","COAMO","FAROFA","YOKI","ARR","FARO"],
-        "massa": ["MAC","MASSA","LASANHA","NISSIN","ESPAGUETE","PENNE","PINDUCA","TALHARIM","FETTUCCINE","GNOCCHI","RAVIOLES","MAC INTEGRAL","CONCHINHA","MAC GRANO","MASSA FRESCA","LAS PERD"],
-        "cereal": ["CEREAL","NESTLE","NESCAU","SUCRILHOS","AVEIA","FLOCOS","KELLOGGS","GRANOLA","MUESLI","BARRA","CEREAIS INTEGRAL","FLOCOS MILHO","CEREAL MAT","BARRA DE CEREAL","AVEIA INSTANT","SNOW FLAKES"],
-        "bebida nao alcoolica": ["BEB","FANTA","AG COC","COCA","SUCO","REFRI","ENERGETICO","AGUA","REFRIG","GATORADE","ADES","CRYSTAL","MONSTER","DELV","NATURAL O","LIFE","SUCOS","TEA","VITAMINA","MAIS","SOYA","TANG","GUARANA","CAFE","CHA","LEITE","SUCO DE FRUTA","REFRIG LITE","ENERG","PRATSY","REF","SCHWEPPES","SCHWEP","CITRUS","DEL VALLE","VALLE","YOPRO","PURITY","GELADINH","CRISTAL"],
-        "bebida alcoolica": ["VODKA","CHAMPAGNE","CERVEJA","SKOL","HEINEKEN","BUDWEISER","SPATEN","PETRA","BRAHMA","STELLA","ESTRELLA","VINHO","ICE","PERIQUIT","SMIRNOFF","BEATS","PASSPORT","WHISKY","COROT","CAMPO","SUAVE","GIN","SAKE","TEQUILA","CERVEJA ARTESANAL","VINHO TINTO","VINHO BRANCO","WHISK","JACK DANIEL","CERV"],
-        "padaria e frios": ["MORTADELA","PRESUNTO","QUEIJO","SALAME","PEPPA","MORTADELA FRANGO","FRIO VARIADOS","QUEIJO RALADO","PAO","BOLINHO","WAFER","BOLO","MUFFIN","BAUDUCCO","MARILAN","VISCONTI","BAGUETE","PAO INTEGRAL","PAO QUEIJO","PAO DOCE","PAO FRANCES","BOLO RECHEADO","PRES","AURORA","P FORMA","QJO","MUSS","MORT"],
-        "congelado": ["PIZZA","SALSICHA","SORVETE","GELADO","CONGELADO","LASANHA","EMPANADO","SEARA","FRIMESA","ICE CREAM","BATATA FRITA","FRUTAS CONGELADAS","REFEICAO PRONTA","PEIXE CONGELADO","SALSICHA CONGELADA","TEKITOS","PERDIG","SALS"],
-        "acougue": ["FRANGO","PEITO","FILE","BIFES","CARNES","BACON","CORTES","CARNE SUINA","COXA","LINGUICA","PRESUNTO","SALSICHA","PERDIGAO","SEARA","FRIMESA","CARNE BOV","ALCATRA","CONTRA FILE","COSTELA","COSTELA SUINA","CARNE MOIDA","BIF ACEBOLA","MEIO ASA","SADIA","FRALDINHA","COX MOLE","FRIBOI","FRIB","ACEM MO"],
-        "biscoito e snack": ["BISCOITO","CHIPS","SNACK","FANDANGOS","CHEETOS","PRINGLES","WAFER","BOLACHA","BOLINHO","BISCOITOS INTEGRAL","SNACK SALG","BATATA PALHA","BOLINHO ARROZ","SNACK DOCE","SALGADOS","ELMA","SALG","PALHA","TORR","BISC"],
-        "bomboniere": ["BALA","CHOCOLATE","BOMBOM","KINDER","RAFFAELLO","TRIDENT","HALLS","DORI","BALAS GOMA","PIPOCA DOCE","CONFETE","CHOC BRANCO","LACTA","NUTELLA","PIRULITO","GELATINA"],
-        "laticinio": ["LEITE","QUEIJO","IOGURTE","CREME","MANTEIGA","REQUEIJAO","ACHOCOLATADO","NATURAL","PRESIDENT","TIROL","BATAVO","ELEGE","MUSSARELA","CREME LEITE","REFRIGERADO","UHT","REQUEIJAO CREMOSO","QUEIJO CREMOSO","IOGUR","CREM LTE","CREM LEI","LEITE COND","CR LEI","ACHOC","CHOCO MILK","IOG","LIDER","DANONINHO","CHOC","CHOCOMILK","BATAV","MOOCA"],
-        "molho": ["MOLHO","KETCHUP","CATCHUP","MAIONESE","TEMPERO","MOSTARDA","SAZON","COND","HEMMER","HELLMANN","QUERO","POMAROLA","PICKLES","CREME CEBOLA","SALSA","MOLHO TARATAR","MOLHO PIMENTA","ELEFANT","CATCH","ELEF","MAION","MOST","HELLM","HELL"],
-        "lataria e conserva": ["MILHO","ERVILHA","LATA","CONSERVA","SARDINHA","ATUM","PALMITO","EXTRATO","BONARE","FUGINI","SELETA","AZEITONA","BERINJELA","MILHO EM CONSERVA","ERVILHA EM LATA"],
-        "condimento": ["ALHO","SAZON","TEMPERO","TEMP","PIMENTA","AZEITE","MANJER","CHIMICHURRI","SAL","KITANO","KININO","LOURO","CHIMICH","CHEIRO","TRIANGULO","OREGANO"],
-        "higiene e limpeza": ["LIMP","DETERG","SABAO","OMO","LYSOL","VEJA","DESINF","PINHO","SANIT","AJAX","UOL","ALVEJANTE","MULTIUSO","ESPONJA","DESENGORD","PAP H","SHAMPOO","COND","DESOD","SABONETE"],
-        "hortifruti": ["CEBOLA","TOMATE","BANANA","CENOURA","ALFACE","MANDIOCA","UVA","MACA","BATATA","LARANJA"],
-        "cosmetico": ["CREME","SHAMPOO","SABONETE","NIVEA","DOVE"],
-        "utilidades": ["COPO","PRATO","GARFO","SACO","ROLO","LIXEIRA"],
-        "pet": ["RACAO","WHISKAS","PEDIGREE","GATO","CACHORRO"],
+
+        "mercearia": ["ARROZ","FEIJAO"],
+
+        "massa": ["MAC","MASSA"],
+
+        "cereal": ["CEREAL","NESCAU"],
+
+        "bebida nao alcoolica": ["COCA","SUCO","CAFE","CHA","LEITE"],
+
+        "bebida alcoolica": ["VODKA","CERVEJA","VINHO"],
+
+        "padaria e frios": ["QUEIJO","PAO","BOLO"],
+
+        "congelado": ["PIZZA","SORVETE","LASANHA"],
+
+        "acougue": ["FRANGO","CARNE","BACON"],
+
+        "biscoito e snack": ["BISCOITO","SNACK","CHIPS"],
+
+        "bomboniere": ["CHOCOLATE","BOMBOM"],
+
+        "laticinio": ["LEITE","IOGURTE","MANTEIGA"],
+
+        "molho": ["MOLHO","KETCHUP"],
+
+        "lataria e conserva": ["MILHO","ERVILHA"],
+
+        "condimento": ["ALHO","TEMPERO"],
+
+        "higiene e limpeza": ["LIMP","DETERG"],
+
+        "hortifruti": ["CEBOLA","TOMATE"],
+
+        "cosmetico": ["CREME","SHAMPOO"],
+
+        "utilidades": ["COPO","PRATO"],
+
+        "pet": ["RACAO","WHISKAS"],
+
         "outros": []
     }
+
     def classificar_produto(nome):
-        nome = remover_acentos(str(nome).upper())
+
+        nome = remover_acentos(
+            str(nome).upper()
+        )
+
         for categoria, palavras in categoria_produtos.items():
+
             for palavra in palavras:
+
                 if palavra in nome:
-                    return remover_acentos(categoria.upper())
+
+                    return remover_acentos(
+                        categoria.upper()
+                    )
+
         return "OUTROS"
-    df["CAT_PRODUTO"] = df["PRODUTO"].apply(classificar_produto)
-    print("✅ Categorias de produtos classificadas:", df["CAT_PRODUTO"].nunique())
-    # 🔹 EXPORTAÇÃO
-    raw_path.parent.mkdir(parents=True, exist_ok=True)
-    # 🔹 Padronizadao das unidades
+
+    df["CAT_PRODUTO"] = (
+
+        df["PRODUTO"]
+
+        .apply(classificar_produto)
+    )
+
+    print(
+        "✅ Categorias classificadas:",
+        df["CAT_PRODUTO"].nunique()
+    )
+
+    # =====================================================
+    # UNIDADES
+    # =====================================================
+
     map_unidades = {
+
         "UN": "UNIDADE",
-        "Un": "UNIDADE",
+
         "PC": "UNIDADE",
+
         "KG": "KG",
-        "Kg": "KG",
+
         "GF": "GARRAFA",
+
         "GL": "GALAO",
+
         "BD": "BANDEJA",
+
         "LA": "LATA",
+
         "PT": "PACOTE",
+
         "FR": "FRASCO",
+
         "CT": "CARTELA",
+
         "AM": "AMARRADO"
     }
-    df["UNIDADE"] = df["UNIDADE"].str.upper().map(map_unidades)
-    print("✅ Unidades padronizadas:", df["UNIDADE"].nunique())
-    # 🔹 Padronização do nome dos produtos (associar maior código ao nome mais recente)
-    maior_codigo_produto = df.groupby("PRODUTO")["COD_PRODUTO"].max()
-    df["COD_PRODUTO"] = df["PRODUTO"].map(maior_codigo_produto)
-    produto_mais_recente = (
-        df.drop_duplicates(subset="COD_PRODUTO", keep="last")
-        .set_index("COD_PRODUTO")["PRODUTO"]
+
+    df["UNIDADE"] = (
+
+        df["UNIDADE"]
+
+        .str.upper()
+
+        .map(map_unidades)
     )
-    df["PRODUTO"] = df["COD_PRODUTO"].map(produto_mais_recente)
+
+    print(
+        "✅ Unidades padronizadas:",
+        df["UNIDADE"].nunique()
+    )
+
+    # =====================================================
+    # PADRONIZAÇÃO FINAL PRODUTO
+    # =====================================================
+
+    maior_codigo_produto = (
+
+        df.groupby("PRODUTO")[
+            "COD_PRODUTO"
+        ]
+
+        .max()
+    )
+
+    df["COD_PRODUTO"] = (
+
+        df["PRODUTO"]
+
+        .map(maior_codigo_produto)
+    )
+
+    produto_mais_recente = (
+
+        df.drop_duplicates(
+
+            subset="COD_PRODUTO",
+
+            keep="last"
+        )
+
+        .set_index("COD_PRODUTO")[
+            "PRODUTO"
+        ]
+    )
+
+    df["PRODUTO"] = (
+
+        df["COD_PRODUTO"]
+
+        .map(produto_mais_recente)
+    )
+
     print("✅ Nome dos produtos padronizados")
-    # 🔹 Ordem final das colunas
+
+    # =====================================================
+    # COLUNAS FINAIS
+    # =====================================================
+
     colunas_finais = [
+
         'CHAVE_ANONIMIZADA',
+
         'DATA',
+
         'MES_ANO',
+
+        'DIA_SEMANA',
+
+        'FERIADO',
+
+        'ESTACAO_ANO',
+
+        'TEMPERATURA_MAX',
+
+        'TEMPERATURA_MIN',
+
+        'TEMPERATURA_MEDIA',
+
+        'CHUVA_MM',
+
+        'CAT_TEMPERATURA',
+
+        'DIA_CHUVOSO',
+
         'PERIODO',
+
         'CNPJ',
+
         'SUPERMERCADO',
+
         'QTDE_TOTAL_NOTA',
+
         'VALOR_TOTAL_NOTA',
+
         'VALOR_TOTAL_TRIBUTOS',
+
         'COD_PRODUTO',
+
         'CAT_PRODUTO',
+
         'PRODUTO',
+
         'UNIDADE',
+
         'QTDE',
+
         'VALOR_PRODUTO',
+
         'VALOR_TOTAL_PRODUTO',
     ]
+
     df = df[colunas_finais]
+
+    # =====================================================
+    # PADRÃO DASHBOARD
+    # =====================================================
+
+    df.columns = [
+
+        'chave_anonimizada',
+
+        'data_hora',
+
+        'mes_ano',
+
+        'dia_semana',
+
+        'feriado',
+
+        'estacao_ano',
+
+        'temperatura_max',
+
+        'temperatura_min',
+
+        'temperatura_media',
+
+        'chuva_mm',
+
+        'cat_temperatura',
+
+        'dia_chuvoso',
+
+        'periodo_dia',
+
+        'cnpj',
+
+        'supermercado',
+
+        'qtd_total_nota',
+
+        'valor_total_nota',
+
+        'valor_total_tributos',
+
+        'cod_produto',
+
+        'categoria_produto',
+
+        'produto',
+
+        'unidade',
+
+        'quantidade',
+
+        'preco_unitario',
+
+        'preco_total',
+    ]
+
     print("✅ DataFrame final com colunas ordenadas")
-    df.to_excel(raw_path, index=False)
-    print("✅ DataFrame exportado para Excel (XLSX):", raw_path)
+
+    # =====================================================
+    # EXPORTAÇÃO
+    # =====================================================
+
+    raw_path.parent.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    df.to_excel(
+        raw_path,
+        index=False
+    )
+
+    print(
+        "✅ DataFrame exportado:",
+        raw_path
+    )
+
     return df
