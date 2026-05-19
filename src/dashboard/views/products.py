@@ -16,6 +16,7 @@ Versão:
     4.0 - 13/05/2026 - Integração com filtros globais do dashboard.
     5.0 - 13/05/2026 - Adição dos personagens Gobta, Ramiris e Milim.
     6.0 - 19/05/2026 - Compatibilidade com métricas dinâmicas.
+    7.0 - 19/05/2026 - Correção do histórico temporal multi-produto.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -364,11 +365,20 @@ def render(
 
             .format({
 
-                'preco_unitario': 'R$ {:,.2f}',
+                'preco_unitario':
 
-                'quantidade': '{:,.2f}',
+                lambda x:
+                format_currency(x),
 
-                'preco_total': 'R$ {:,.2f}'
+                'quantidade':
+
+                lambda x:
+                format_number(x),
+
+                'preco_total':
+
+                lambda x:
+                format_currency(x)
             })
         )
 
@@ -382,11 +392,11 @@ def render(
         st.divider()
 
         # =====================================================
-        # HISTÓRICO DE PREÇOS
+        # HISTÓRICO TEMPORAL
         # =====================================================
 
         st.subheader(
-            '📈 Histórico de Preços'
+            '📈 Histórico Temporal'
         )
 
         milim_col, price_chart_col = st.columns(
@@ -411,18 +421,47 @@ def render(
             )
 
         # =====================================================
+        # PREPARAÇÃO TEMPORAL
+        # =====================================================
+
+        temporal_result = result.copy()
+
+        temporal_result['data_hora'] = (
+
+            pd.to_datetime(
+                temporal_result['data_hora']
+            )
+        )
+
+        temporal_result = temporal_result.sort_values(
+            by='data_hora'
+        )
+
+        # =====================================================
         # GRÁFICO
         # =====================================================
 
         with price_chart_col:
 
+            # =====================================================
+            # MÉTRICA DO HISTÓRICO TEMPORAL
+            # =====================================================
+
+            history_metric = metric
+
+            # Histórico temporal deve mostrar evolução de preço
+
+            if metric == 'preco_total':
+
+                history_metric = 'preco_unitario'
+
             fig = line_chart(
 
-                data=result,
+                data=temporal_result,
 
                 x='data_hora',
 
-                metric=metric,
+                metric=history_metric,
 
                 color='produto'
             )

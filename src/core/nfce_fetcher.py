@@ -486,7 +486,7 @@ def process_base(
         errors="coerce"
     )
 
-    df["MES_ANO"] = df["DATA"].dt.strftime("%Y%m")
+    df["MES_ANO"] = df["DATA"].dt.strftime("%Y-%m")
 
     print(
         "✅ Datas convertidas, meses/anos únicos:",

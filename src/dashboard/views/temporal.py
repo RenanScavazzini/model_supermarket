@@ -14,6 +14,7 @@ Versão:
     3.0 - 13/05/2026 - Adição dos personagens Souei, Benimaru e Ranga.
     4.0 - 13/05/2026 - Reorganização da ordem dos gráficos e melhoria da evolução diária.
     5.0 - 19/05/2026 - Refatoração completa para métricas dinâmicas.
+    6.0 - 19/05/2026 - Adição da evolução diária completa com dias sem compras.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -21,6 +22,7 @@ Copyright:
 
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 
 from src.dashboard.components.filters import (
     apply_filters
@@ -28,7 +30,9 @@ from src.dashboard.components.filters import (
 
 from src.dashboard.components.charts import (
     line_chart,
-    bar_chart
+    bar_chart,
+    apply_brazilian_format,
+    remove_plotly_title
 )
 
 from src.core.logger import setup_logger
@@ -124,9 +128,18 @@ def render(
             '📈 Evolução Mensal'
         )
 
+        monthly_temp = df.copy()
+
+        monthly_temp['mes_ano'] = (
+
+            monthly_temp['mes_ano']
+
+            .astype(str)
+        )
+
         fig_monthly = line_chart(
 
-            data=df,
+            data=monthly_temp,
 
             x='mes_ano',
 
@@ -169,19 +182,20 @@ def render(
         gap="medium"
     )
 
-    # =====================================================
-    # PREPARAÇÃO DATAFRAME DIÁRIO
-    # =====================================================
-
     daily_temp = df.copy()
+
+    daily_temp['dia_ordem'] = (
+
+        daily_temp['data_hora']
+
+        .dt.normalize()
+    )
 
     daily_temp['dia'] = (
 
-        daily_temp[
-            'data_hora'
-        ]
+        daily_temp['dia_ordem']
 
-        .dt.date
+        .dt.strftime('%d/%m/%Y')
     )
 
     with daily_chart_col:
@@ -215,6 +229,207 @@ def render(
             'image/ui/souei.png',
             width=240
         )
+
+    st.divider()
+
+    # =====================================================
+    # EVOLUÇÃO DIÁRIA COMPLETA
+    # =====================================================
+
+    st.subheader(
+        '📉 Evolução Diária Completa'
+    )
+
+    full_daily = df.copy()
+
+    full_daily['dia_ordem'] = (
+
+        full_daily['data_hora']
+
+        .dt.normalize()
+    )
+
+    # =====================================================
+    # AGREGAÇÃO
+    # =====================================================
+
+    if metric == 'preco_total':
+
+        grouped = (
+
+            full_daily
+
+            .groupby('dia_ordem')[
+                'preco_total'
+            ]
+
+            .sum()
+        )
+
+    elif metric == 'quantidade':
+
+        grouped = (
+
+            full_daily
+
+            .groupby('dia_ordem')
+
+            .size()
+        )
+
+    elif metric == 'qtd_notas':
+
+        grouped = (
+
+            full_daily
+
+            .groupby('dia_ordem')[
+                'chave_anonimizada'
+            ]
+
+            .nunique()
+        )
+
+    elif metric == 'valor_total_tributos':
+
+        dedup = (
+
+            full_daily[[
+                'dia_ordem',
+                'chave_anonimizada',
+                'valor_total_tributos'
+            ]]
+
+            .drop_duplicates(
+                subset=['chave_anonimizada']
+            )
+        )
+
+        grouped = (
+
+            dedup
+
+            .groupby('dia_ordem')[
+                'valor_total_tributos'
+            ]
+
+            .sum()
+        )
+
+    # =====================================================
+    # RANGE COMPLETO
+    # =====================================================
+
+    full_range = pd.date_range(
+
+        start=grouped.index.min(),
+
+        end=grouped.index.max(),
+
+        freq='D'
+    )
+
+    grouped = (
+
+        grouped
+
+        .reindex(
+            full_range,
+            fill_value=0
+        )
+
+        .reset_index()
+    )
+
+    grouped.columns = [
+
+        'dia_ordem',
+
+        'valor'
+    ]
+
+    grouped['dia'] = (
+
+        grouped['dia_ordem']
+
+        .dt.strftime('%d/%m/%Y')
+    )
+
+    # =====================================================
+    # GRÁFICO COMPLETO
+    # =====================================================
+
+    fig_complete = px.line(
+
+        grouped,
+
+        x='dia_ordem',
+
+        y='valor',
+
+        markers=False
+    )
+
+    # =====================================================
+    # LABELS DO EIXO
+    # =====================================================
+
+    fig_complete.update_xaxes(
+
+        tickformat='%d/%m/%Y'
+    )
+
+    # =====================================================
+    # REMOVE TÍTULO
+    # =====================================================
+
+    fig_complete = remove_plotly_title(
+        fig_complete
+    )
+
+    # =====================================================
+    # LAYOUT
+    # =====================================================
+
+    fig_complete.update_layout(
+
+        plot_bgcolor='rgba(0,0,0,0)',
+
+        paper_bgcolor='rgba(0,0,0,0)',
+
+        hovermode='x unified'
+    )
+
+    # =====================================================
+    # LINHA
+    # =====================================================
+
+    fig_complete.update_traces(
+
+        line=dict(
+            width=3
+        )
+    )
+
+    # =====================================================
+    # FORMATAÇÃO
+    # =====================================================
+
+    fig_complete = apply_brazilian_format(
+
+        fig_complete,
+
+        metric
+    )
+
+    st.plotly_chart(
+
+        fig_complete,
+
+        use_container_width=True,
+
+        key='temporal_complete_daily_chart'
+    )
 
     st.divider()
 

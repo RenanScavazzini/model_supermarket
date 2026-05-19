@@ -1,7 +1,8 @@
 """
 Descrição:
-    Módulo responsável pela criação de gráficos interativos utilizando Plotly,
-    fornecendo componentes reutilizáveis para visualização de dados no dashboard.
+    Módulo responsável pela criação de gráficos interativos
+    utilizando Plotly, fornecendo componentes reutilizáveis
+    para visualização de dados no dashboard.
 
 Autor:
     Renan Douglas Floriano Scavazzini
@@ -10,9 +11,11 @@ Autor:
 Versão:
     1.0 - 12/05/2026
     2.0 - 13/05/2026 - Adição de valores acima das barras.
-    3.0 - 13/05/2026 - Remoção completa dos títulos internos dos gráficos.
-    4.0 - 13/05/2026 - Compatibilidade mobile e Plotly antigo.
-    5.0 - 19/05/2026 - Inclusão de métricas dinâmicas e agregações inteligentes.
+    3.0 - 13/05/2026 - Remoção completa dos títulos internos.
+    4.0 - 13/05/2026 - Compatibilidade mobile.
+    5.0 - 19/05/2026 - Refatoração completa para métricas dinâmicas.
+    6.0 - 19/05/2026 - Correção de ordenação temporal.
+    7.0 - 19/05/2026 - Adição de Top N em gráficos categóricos.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -21,11 +24,13 @@ Copyright:
 import pandas as pd
 import plotly.express as px
 
-from src.utils.formatters import format_currency, format_number
-
+from src.utils.formatters import (
+    format_currency,
+    format_number
+)
 
 # ==========================================================
-# CONFIGURAÇÃO DAS MÉTRICAS
+# CONFIGURAÇÃO MÉTRICAS
 # ==========================================================
 
 METRIC_CONFIG = {
@@ -37,9 +42,9 @@ METRIC_CONFIG = {
         'is_currency': True
     },
 
-    'valor_total_tributos': {
+    'preco_unitario': {
 
-        'label': 'Valor Total Tributos',
+        'label': 'Preço Unitário',
 
         'is_currency': True
     },
@@ -56,8 +61,41 @@ METRIC_CONFIG = {
         'label': 'Quantidade de Notas',
 
         'is_currency': False
+    },
+
+    'valor_total_tributos': {
+
+        'label': 'Valor Total Tributos',
+
+        'is_currency': True
     }
 }
+
+
+# ==========================================================
+# REMOVE TÍTULO
+# ==========================================================
+
+def remove_plotly_title(
+    fig
+):
+    """
+    Descrição:
+        Remove completamente o título interno do Plotly.
+    """
+
+    fig.update_layout(
+
+        title_text='',
+
+        title=None,
+
+        margin=dict(
+            t=30
+        )
+    )
+
+    return fig
 
 
 # ==========================================================
@@ -79,9 +117,10 @@ def apply_brazilian_format(
         'is_currency'
     ]
 
-    # ======================================================
-    # MONETÁRIO
-    # ======================================================
+    fig.update_layout(
+
+        separators=',.'
+    )
 
     if is_currency:
 
@@ -91,9 +130,7 @@ def apply_brazilian_format(
 
                 tickprefix='R$ ',
 
-                tickformat=',.2f',
-
-                separatethousands=True
+                tickformat=',.2f'
             )
         )
 
@@ -103,19 +140,13 @@ def apply_brazilian_format(
             'R$ %{y:,.2f}<extra></extra>'
         )
 
-    # ======================================================
-    # QUANTITATIVO
-    # ======================================================
-
     else:
 
         fig.update_layout(
 
             yaxis=dict(
 
-                tickformat=',.0f',
-
-                separatethousands=True
+                tickformat=',.0f'
             )
         )
 
@@ -129,45 +160,34 @@ def apply_brazilian_format(
 
 
 # ==========================================================
-# REMOVE TÍTULO
-# ==========================================================
-
-def remove_plotly_title(
-    fig
-):
-    """
-    Descrição:
-        Remove completamente título interno do Plotly.
-    """
-
-    fig.update_layout(
-
-        title_text='',
-
-        title=None,
-
-        margin=dict(
-            t=30
-        )
-    )
-
-    return fig
-
-
-# ==========================================================
-# PREPARAÇÃO DOS DADOS
+# PREPARAÇÃO MÉTRICAS
 # ==========================================================
 
 def prepare_metric_data(
     data: pd.DataFrame,
     group_col: str,
-    metric: str,
-    category_orders: dict = None
+    metric: str
 ) -> pd.DataFrame:
     """
     Descrição:
-        Prepara dados agregados conforme métrica selecionada.
+        Prepara dados agregados conforme métrica.
     """
+
+    group_cols = [group_col]
+
+    # ======================================================
+    # ORDENAÇÃO TEMPORAL DIÁRIA
+    # ======================================================
+
+    if (
+        group_col == 'dia'
+        and
+        'dia_ordem' in data.columns
+    ):
+
+        group_cols.append(
+            'dia_ordem'
+        )
 
     # ======================================================
     # PREÇO TOTAL
@@ -179,17 +199,40 @@ def prepare_metric_data(
 
             data
 
-            .groupby(group_col)[
+            .groupby(group_cols)[
                 'preco_total'
             ]
 
             .sum()
 
-            .reset_index()
+            .reset_index(
+                name='valor'
+            )
         )
 
     # ======================================================
-    # QUANTIDADE DE REGISTROS
+    # PREÇO UNITÁRIO
+    # ======================================================
+
+    elif metric == 'preco_unitario':
+
+        result = (
+
+            data
+
+            .groupby(group_cols)[
+                'preco_unitario'
+            ]
+
+            .mean()
+
+            .reset_index(
+                name='valor'
+            )
+        )
+
+    # ======================================================
+    # QUANTIDADE
     # ======================================================
 
     elif metric == 'quantidade':
@@ -198,7 +241,7 @@ def prepare_metric_data(
 
             data
 
-            .groupby(group_col)
+            .groupby(group_cols)
 
             .size()
 
@@ -207,10 +250,8 @@ def prepare_metric_data(
             )
         )
 
-        return result
-
     # ======================================================
-    # QUANTIDADE DE NOTAS
+    # QUANTIDADE NOTAS
     # ======================================================
 
     elif metric == 'qtd_notas':
@@ -219,17 +260,19 @@ def prepare_metric_data(
 
             data
 
-            .groupby(group_col)[
+            .groupby(group_cols)[
                 'chave_anonimizada'
             ]
 
             .nunique()
 
-            .reset_index()
+            .reset_index(
+                name='valor'
+            )
         )
 
     # ======================================================
-    # VALOR TOTAL TRIBUTOS
+    # TRIBUTOS
     # ======================================================
 
     elif metric == 'valor_total_tributos':
@@ -237,7 +280,7 @@ def prepare_metric_data(
         dedup = (
 
             data[[
-                group_col,
+                *group_cols,
                 'chave_anonimizada',
                 'valor_total_tributos'
             ]]
@@ -251,18 +294,16 @@ def prepare_metric_data(
 
             dedup
 
-            .groupby(group_col)[
+            .groupby(group_cols)[
                 'valor_total_tributos'
             ]
 
             .sum()
 
-            .reset_index()
+            .reset_index(
+                name='valor'
+            )
         )
-
-    # ======================================================
-    # ERRO
-    # ======================================================
 
     else:
 
@@ -270,15 +311,6 @@ def prepare_metric_data(
             f'Métrica inválida: {metric}'
         )
 
-    # ======================================================
-    # PADRONIZAÇÃO
-    # ======================================================
-
-    result.columns = [
-        group_col,
-        'valor'
-    ]
-    
     return result
 
 
@@ -305,9 +337,7 @@ def bar_chart(
 
         group_col=x,
 
-        metric=metric,
-
-        category_orders=category_orders
+        metric=metric
     )
 
     # =====================================================
@@ -401,19 +431,6 @@ def bar_chart(
     # TEXTO DAS BARRAS
     # =====================================================
 
-    if METRIC_CONFIG[metric]['is_currency']:
-
-        plot_data['text_label'] = (
-
-            plot_data['valor']
-
-            .apply(format_currency)
-        )
-
-    else:
-
-        text_template = '%{text:,.0f}'
-
     fig.update_traces(
 
         textposition='outside',
@@ -436,7 +453,7 @@ def bar_chart(
     )
 
     # =====================================================
-    # ORDENAÇÃO DAS CATEGORIAS
+    # ORDENAÇÃO
     # =====================================================
 
     if category_orders:
@@ -476,132 +493,77 @@ def line_chart(
     """
 
     # ======================================================
-    # AGRUPAMENTO
+    # QUANDO EXISTE COLOR
     # ======================================================
-
-    group_cols = [x]
 
     if color:
 
-        group_cols.append(
-            color
-        )
+        plot_data_list = []
 
-    # ======================================================
-    # PREÇO TOTAL
-    # ======================================================
+        for color_value in data[color].dropna().unique():
 
-    if metric == 'preco_total':
+            subset = (
 
-        plot_data = (
-
-            data
-
-            .groupby(group_cols)[
-                'preco_total'
-            ]
-
-            .sum()
-
-            .reset_index(
-                name='valor'
+                data[
+                    data[color] == color_value
+                ]
             )
-        )
 
-    # ======================================================
-    # QUANTIDADE
-    # ======================================================
+            prepared = prepare_metric_data(
 
-    elif metric == 'quantidade':
+                data=subset,
 
-        plot_data = (
+                group_col=x,
 
-            data
-
-            .groupby(group_cols)
-
-            .size()
-
-            .reset_index(
-                name='valor'
+                metric=metric
             )
-        )
 
-    # ======================================================
-    # QUANTIDADE DE NOTAS
-    # ======================================================
+            prepared[color] = color_value
 
-    elif metric == 'qtd_notas':
-
-        plot_data = (
-
-            data
-
-            .groupby(group_cols)[
-                'chave_anonimizada'
-            ]
-
-            .nunique()
-
-            .reset_index(
-                name='valor'
+            plot_data_list.append(
+                prepared
             )
+
+        plot_data = pd.concat(
+
+            plot_data_list,
+
+            ignore_index=True
         )
 
     # ======================================================
-    # VALOR TOTAL TRIBUTOS
-    # ======================================================
-
-    elif metric == 'valor_total_tributos':
-
-        dedup = (
-
-            data[[
-                *group_cols,
-                'chave_anonimizada',
-                'valor_total_tributos'
-            ]]
-
-            .drop_duplicates(
-                subset=['chave_anonimizada']
-            )
-        )
-
-        plot_data = (
-
-            dedup
-
-            .groupby(group_cols)[
-                'valor_total_tributos'
-            ]
-
-            .sum()
-
-            .reset_index(
-                name='valor'
-            )
-        )
-
-    # ======================================================
-    # ERRO
+    # SEM COLOR
     # ======================================================
 
     else:
 
-        raise ValueError(
-            f'Métrica inválida: {metric}'
+        plot_data = prepare_metric_data(
+
+            data=data,
+
+            group_col=x,
+
+            metric=metric
         )
 
     # ======================================================
     # ORDENAÇÃO TEMPORAL
     # ======================================================
 
-    plot_data = plot_data.sort_values(
-        by=x
-    )
+    if 'dia_ordem' in plot_data.columns:
+
+        plot_data = plot_data.sort_values(
+            by='dia_ordem'
+        )
+
+    else:
+
+        plot_data = plot_data.sort_values(
+            by=x
+        )
 
     # ======================================================
-    # CRIA FIGURA
+    # FIGURA
     # ======================================================
 
     fig = px.line(
@@ -614,7 +576,7 @@ def line_chart(
 
         color=color,
 
-        markers=True
+        markers=False
     )
 
     # ======================================================
@@ -639,17 +601,13 @@ def line_chart(
     )
 
     # ======================================================
-    # ESPESSURA DAS LINHAS
+    # LINHAS
     # ======================================================
 
     fig.update_traces(
 
         line=dict(
             width=3
-        ),
-
-        marker=dict(
-            size=7
         )
     )
 
