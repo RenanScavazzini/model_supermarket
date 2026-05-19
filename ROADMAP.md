@@ -1,17 +1,32 @@
 # ROADMAP - model_supermarket
 
-## Versão Atual
+## Visão Geral
 
-### v1.0
+O projeto `model_supermarket` está evoluindo de um dashboard analítico de NFC-e para uma plataforma modular de análise comportamental, engenharia de dados, Machine Learning e Inteligência Artificial aplicada ao consumo.
 
-- arquitetura modular inicial
-- dashboard Streamlit
+---
+
+# Versão Atual
+
+## v2.0
+
+### ✅ Implementado
+
+- arquitetura modular
+- dashboard Streamlit responsivo
 - análise temporal
 - análise de produtos
-- métricas consolidadas
+- KPIs analíticos
 - normalização de dados
 - logging centralizado
 - configuração via YAML
+- engenharia de features
+- integração climática externa
+- análises sazonais
+- filtros dinâmicos
+- gráficos interativos
+- visualização mobile
+- tema visual inspirado em Tensura
 
 ---
 
@@ -19,86 +34,255 @@
 
 ## Objetivos
 
-- melhorar filtros globais
-- otimizar visualizações
-- expandir análises descritivas
-- melhorar responsividade mobile
+Consolidar a camada analítica do dashboard e enriquecer o ecossistema de visualizações.
 
 ## Funcionalidades
 
-- filtros avançados
+### ✅ Implementado
+- filtros globais
 - análise por categoria
 - dashboards comparativos
+- análise temporal
+- análise de sazonalidade
+- clima histórico
+- dia da semana
+- feriados
+- estação do ano
+
+### 🚧 Em Desenvolvimento
 - exportação CSV
 - exportação Excel
-- análise de sazonalidade
+- análise comparativa entre períodos
+- análise climática avançada
+- métricas financeiras pessoais
+- inflação pessoal
 
 ---
 
-# Fase 2 — Modelos Estatísticos
+# Fase 2 — Engenharia de Features
 
 ## Objetivos
 
-Adicionar modelos analíticos e preditivos.
+Expandir o pipeline de feature engineering para suportar modelagem avançada e IA.
 
 ## Funcionalidades
 
-- regressão de gastos
-- classificação de compras
-- clusterização de consumidores
-- detecção de padrões de compra
-- recomendação de produtos
+### ✅ Implementado
+
+#### Features internas
+- período do dia
+- dia da semana
+- feriado
+- estação do ano
+- categorização de produtos
+- padronização de produtos
+- normalização de unidades
+
+#### Features externas
+- temperatura máxima
+- temperatura mínima
+- temperatura média
+- precipitação
+- categoria de temperatura
+- indicador de dia chuvoso
+
+### 🚧 Planejado
+
+#### Calendário financeiro
+- início/fim de mês
+- período salarial
+- quinzena
+- dia útil
+
+#### Feriados avançados
+- véspera de feriado
+- pós-feriado
+- feriado prolongado
+
+#### Features climáticas avançadas
+- umidade
+- vento
+- pressão atmosférica
+
+#### Outras integrações
+- Google Trends
+- commodities
+- IPCA alimentos
+- eventos esportivos
+- sazonalidade comercial
 
 ---
 
-# Fase 3 — Engenharia de Dados
+# Fase 3 — Modelagem Estatística
 
 ## Objetivos
 
-Expandir pipeline de dados.
+Adicionar modelos estatísticos, analíticos e preditivos.
+
+## Funcionalidades
+
+### 📈 Séries Temporais
+- previsão de gastos
+- previsão de ticket médio
+- previsão por categoria
+- forecast sazonal
+
+### 🧠 Machine Learning
+- regressão de gastos
+- classificação de comportamento
+- clusterização
+- detecção de anomalias
+- segmentação de consumo
+
+### 🛒 Recommendation Systems
+- recomendação de produtos
+- recomendação de categorias
+- recomendação contextual baseada em clima
+
+---
+
+# Fase 4 — Market Basket Analysis
+
+## Objetivos
+
+Implementar análise de associação e comportamento de compra.
+
+## Funcionalidades
+
+### 📦 Association Rules
+- FP-Growth
+- Apriori
+- regras de associação
+- lift
+- confidence
+- support
+
+### 🧠 Análises Contextuais
+- associações por clima
+- associações por estação
+- associações por supermercado
+- associações por período do dia
+
+### 📊 Visualizações
+- redes de produtos
+- grafos
+- heatmaps
+- embeddings de produtos
+
+---
+
+# Fase 5 — Inteligência Artificial
+
+## Objetivos
+
+Adicionar IA Generativa e análise automática de comportamento.
+
+## Funcionalidades
+
+### 🤖 LLMs
+- geração automática de insights
+- análises textuais automáticas
+- resumo inteligente de consumo
+- interpretação estatística automática
+
+### 🧠 IA Analítica
+- explicabilidade de modelos
+- detecção automática de padrões
+- geração automática de hipóteses
+- interpretação comportamental
+
+### 💬 Assistente Inteligente
+- chatbot analítico
+- perguntas em linguagem natural
+- exploração conversacional da base
+
+---
+
+# Fase 6 — Engenharia de Dados
+
+## Objetivos
+
+Evoluir pipeline de dados e persistência.
 
 ## Funcionalidades
 
 - ingestão incremental
 - múltiplos arquivos
-- pipeline automatizado
+- automação de pipeline
+- versionamento de datasets
 - validação de schema
 - armazenamento histórico
-- banco de dados
+- banco de dados analítico
+- parquet lakehouse
 
 ---
 
-# Fase 4 — Deploy e Escalabilidade
+# Fase 7 — Deploy e Escalabilidade
 
 ## Objetivos
 
-Preparar projeto para produção.
+Preparar projeto para ambiente produtivo e cloud analytics.
 
 ## Funcionalidades
 
-- deploy cloud
+### ☁️ Infraestrutura
+- Streamlit Cloud
 - Docker
-- API REST
-- autenticação
-- monitoramento
-- observabilidade
 - CI/CD
+- observabilidade
+- monitoramento
+
+### 🔌 APIs
+- API REST
+- endpoints analíticos
+- serving de modelos
+
+### 🔐 Segurança
+- autenticação
+- controle de acesso
+- auditoria
 
 ---
 
-# Fase 5 — Inteligência Analítica
+# Fase 8 — Expansão Analítica
 
 ## Objetivos
 
-Adicionar inteligência analítica avançada.
+Transformar o projeto em uma plataforma analítica completa de comportamento de consumo.
 
 ## Funcionalidades
 
-- previsão de inflação pessoal
-- previsão de gastos futuros
-- análise de comportamento
-- análise sazonal avançada
-- NLP para produtos
-- OCR de NFC-e
+### 🧾 Consumo Pessoal
+- inflação pessoal
+- análise financeira
+- metas de gastos
+- orçamento inteligente
+
+### 🏪 Retail Analytics
+- análise de pricing
+- elasticidade de consumo
+- sensibilidade climática
+- comportamento sazonal
+
+### 🌐 IA + Analytics
+- embeddings
+- vector search
+- semantic analytics
+- recommendation engine
 
 ---
+
+# Roadmap Técnico
+
+## Pipeline Atual
+
+```text
+NFC-e
+→ ingestão
+→ tratamento
+→ feature engineering
+→ clima externo
+→ dashboard
+→ modelagem
+→ IA
+```

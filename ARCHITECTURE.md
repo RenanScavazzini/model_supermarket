@@ -2,15 +2,27 @@
 
 ## Visão Geral
 
-O projeto `model_supermarket` adota uma arquitetura modular orientada a análise de dados, engenharia analítica e visualização interativa, seguindo princípios de separação de responsabilidades, reutilização de componentes e escalabilidade.
+O projeto `model_supermarket` adota uma arquitetura modular orientada a engenharia de dados, análise estatística, visualização interativa e futura integração com Inteligência Artificial e Machine Learning.
 
-A estrutura foi desenvolvida para suportar:
+A estrutura foi desenvolvida seguindo princípios de:
+
+- separação de responsabilidades
+- modularização
+- reutilização de componentes
+- escalabilidade analítica
+- extensibilidade para IA
+- pipeline de feature engineering
+- integração com fontes externas
+
+O sistema suporta:
 
 - ingestão e tratamento de notas fiscais NFC-e
+- engenharia de atributos internos e externos
 - exploração analítica e estatística
 - geração de métricas e agregações
 - visualização interativa via dashboard
-- futura expansão para modelos de Machine Learning
+- integração com APIs externas
+- futura expansão para Machine Learning e LLMs
 - deploy web utilizando Streamlit Cloud
 
 ---
@@ -26,15 +38,24 @@ model_supermarket/
 ├── .venv/
 │
 ├── config/
-│   └── settings.yaml
+│   └── config.yaml
 │
 ├── data/
-│   └── notas_fiscais_supermercado.xlsx
+│   │
+│   ├── external/
+│   │   └── weather/
+│   │       └── weather_curitiba.parquet
+│   │
+│   ├── de_para_nfce.csv
+│   ├── nfce_data_fetched.csv
+│   ├── notas_fiscais_supermercado.xlsx
+│   └── qrcodes.txt
 │
 ├── docs/
 │
 ├── image/
-│   └── logo.png
+│   ├── background.png
+│   └── ui/
 │
 ├── logs/
 │   └── app.log
@@ -69,7 +90,11 @@ model_supermarket/
 │   │       ├── database.py
 │   │       ├── overview.py
 │   │       ├── products.py
+│   │       ├── statistical_model.py
 │   │       └── temporal.py
+│   │
+│   ├── external/
+│   │   └── weather.py
 │   │
 │   └── utils/
 │       ├── constants.py
@@ -78,7 +103,8 @@ model_supermarket/
 │
 ├── 01_dados.ipynb
 ├── 02_eda.ipynb
-├── 03_dashboard.ipynb
+├── 03_modelagem.ipynb
+├── 04_dashboard.ipynb
 │
 ├── ARCHITECTURE.md
 ├── README.md
