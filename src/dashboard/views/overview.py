@@ -14,6 +14,7 @@ Versão:
     3.0 - 13/05/2026 - Adição de slimes temáticos na visão geral.
     4.0 - 13/05/2026 - Adição das personagens Shion e Shuna na seção gráfica.
     5.0 - 19/05/2026 - Refatoração completa para métricas dinâmicas nos gráficos.
+    6.0 - 19/05/2026 - Inclusão de ordenações customizadas nos gráficos categóricos.
 
 Copyright:
     Copyright (c) 2026 Renan Douglas Floriano Scavazzini
@@ -288,7 +289,21 @@ def render(
 
                 x="periodo_dia",
 
-                metric=selected_metric
+                metric=selected_metric,
+
+                category_orders={
+
+                    'periodo_dia': [
+
+                        'MADRUGADA',
+
+                        'MANHA',
+
+                        'TARDE',
+
+                        'NOITE'
+                    ]
+                }
             )
 
             st.plotly_chart(
@@ -335,7 +350,9 @@ def render(
 
                 x='categoria_produto',
 
-                metric=selected_metric
+                metric=selected_metric,
+
+                top_n=20
             )
 
             st.plotly_chart(
@@ -418,7 +435,27 @@ def render(
 
             x='dia_semana',
 
-            metric=selected_metric
+            metric=selected_metric,
+
+            category_orders={
+
+                'dia_semana': [
+
+                    'DOMINGO',
+
+                    'SEGUNDA',
+
+                    'TERCA',
+
+                    'QUARTA',
+
+                    'QUINTA',
+
+                    'SEXTA',
+
+                    'SABADO'
+                ]
+            }
         )
 
         st.plotly_chart(
@@ -473,7 +510,21 @@ def render(
 
             x='estacao_ano',
 
-            metric=selected_metric
+            metric=selected_metric,
+
+            category_orders={
+
+                'estacao_ano': [
+
+                    'PRIMAVERA',
+
+                    'VERAO',
+
+                    'OUTONO',
+
+                    'INVERNO'
+                ]
+            }
         )
 
         st.plotly_chart(
@@ -529,7 +580,23 @@ def render(
 
             x='cat_temperatura',
 
-            metric=selected_metric
+            metric=selected_metric,
+
+            category_orders={
+
+                'cat_temperatura': [
+
+                    'MUITO_FRIO',
+
+                    'FRIO',
+
+                    'AMENO',
+
+                    'QUENTE',
+
+                    'MUITO_QUENTE'
+                ]
+            }
         )
 
         st.plotly_chart(

@@ -19,26 +19,33 @@ def format_currency(
 ) -> str:
     """
     Descrição:
-        Formata valor monetário no padrão brasileiro:
-        milhar com ponto e decimal com vírgula.
-
-    Parâmetros:
-        value (float): Valor monetário.
-
-    Retorno:
-        str: Valor formatado.
+        Formata valor monetário no padrão brasileiro.
     """
 
-    formatted = f"{value:,.2f}"
+    if value is None:
 
-    formatted = (
-        formatted
-        .replace(',', 'X')
-        .replace('.', ',')
-        .replace('X', '.')
-    )
+        return 'R$ 0,00'
 
-    return f"R$ {formatted}"
+    try:
+
+        formatted = f"{float(value):,.2f}"
+
+        formatted = (
+
+            formatted
+
+            .replace(',', 'X')
+
+            .replace('.', ',')
+
+            .replace('X', '.')
+        )
+
+        return f"R$ {formatted}"
+
+    except Exception:
+
+        return 'R$ 0,00'
 
 
 def format_number(
@@ -47,24 +54,30 @@ def format_number(
 ) -> str:
     """
     Descrição:
-        Formata números gerais no padrão brasileiro:
-        milhar com ponto e decimal com vírgula.
-
-    Parâmetros:
-        value (float): Valor numérico.
-        decimals (int): Quantidade de casas decimais.
-
-    Retorno:
-        str: Valor formatado.
+        Formata números gerais no padrão brasileiro.
     """
 
-    formatted = f"{value:,.{decimals}f}"
+    if value is None:
 
-    formatted = (
-        formatted
-        .replace(',', 'X')
-        .replace('.', ',')
-        .replace('X', '.')
-    )
+        value = 0
 
-    return formatted
+    try:
+
+        formatted = f"{float(value):,.{decimals}f}"
+
+        formatted = (
+
+            formatted
+
+            .replace(',', 'X')
+
+            .replace('.', ',')
+
+            .replace('X', '.')
+        )
+
+        return formatted
+
+    except Exception:
+
+        return '0'

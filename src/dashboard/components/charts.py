@@ -21,6 +21,8 @@ Copyright:
 import pandas as pd
 import plotly.express as px
 
+from src.utils.formatters import format_currency, format_number
+
 
 # ==========================================================
 # CONFIGURAÇÃO DAS MÉTRICAS
@@ -159,7 +161,8 @@ def remove_plotly_title(
 def prepare_metric_data(
     data: pd.DataFrame,
     group_col: str,
-    metric: str
+    metric: str,
+    category_orders: dict = None
 ) -> pd.DataFrame:
     """
     Descrição:
@@ -275,7 +278,7 @@ def prepare_metric_data(
         group_col,
         'valor'
     ]
-
+    
     return result
 
 
@@ -287,7 +290,9 @@ def bar_chart(
     data: pd.DataFrame,
     x: str,
     metric: str,
-    title: str = None
+    title: str = None,
+    category_orders: dict = None,
+    top_n: int = 15
 ):
     """
     Descrição:
@@ -300,8 +305,65 @@ def bar_chart(
 
         group_col=x,
 
-        metric=metric
+        metric=metric,
+
+        category_orders=category_orders
     )
+
+    # =====================================================
+    # TOP N
+    # =====================================================
+
+    if (
+
+        top_n
+
+        and
+
+        not category_orders
+
+    ):
+
+        plot_data = (
+
+            plot_data
+
+            .sort_values(
+
+                by='valor',
+
+                ascending=False
+            )
+
+            .head(top_n)
+        )
+
+    # =====================================================
+    # LABELS FORMATADAS
+    # =====================================================
+
+    if METRIC_CONFIG[metric]['is_currency']:
+
+        plot_data['text_label'] = (
+
+            plot_data['valor']
+
+            .apply(format_currency)
+        )
+
+    else:
+
+        plot_data['text_label'] = (
+
+            plot_data['valor']
+
+            .apply(
+                lambda x: format_number(
+                    x,
+                    0
+                )
+            )
+        )
 
     fig = px.bar(
 
@@ -311,7 +373,9 @@ def bar_chart(
 
         y='valor',
 
-        text='valor'
+        text='text_label',
+
+        category_orders=category_orders
     )
 
     # =====================================================
@@ -339,7 +403,12 @@ def bar_chart(
 
     if METRIC_CONFIG[metric]['is_currency']:
 
-        text_template = 'R$ %{text:,.2f}'
+        plot_data['text_label'] = (
+
+            plot_data['valor']
+
+            .apply(format_currency)
+        )
 
     else:
 
@@ -348,8 +417,6 @@ def bar_chart(
     fig.update_traces(
 
         textposition='outside',
-
-        texttemplate=text_template,
 
         textfont=dict(
             size=13,
@@ -367,6 +434,27 @@ def bar_chart(
         fig,
         metric
     )
+
+    # =====================================================
+    # ORDENAÇÃO DAS CATEGORIAS
+    # =====================================================
+
+    if category_orders:
+
+        fig.update_xaxes(
+
+            categoryorder='array',
+
+            categoryarray=
+            category_orders.get(x, [])
+        )
+
+    else:
+
+        fig.update_xaxes(
+
+            categoryorder='total descending'
+        )
 
     return fig
 
