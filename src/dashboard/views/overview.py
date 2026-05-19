@@ -400,7 +400,7 @@ def render(
                     ascending=False
                 )
 
-                .head(15)
+                .head(20)
             )
 
             fig_category = bar_chart(

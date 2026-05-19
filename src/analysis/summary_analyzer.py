@@ -83,7 +83,8 @@ class SummaryAnalyzer:
     ) -> int:
         """
         Descrição:
-            Calcula quantidade de notas fiscais.
+            Calcula quantidade de notas fiscais distintas
+            utilizando chave_anonimizada.
 
         Parâmetros:
             ---
@@ -92,13 +93,28 @@ class SummaryAnalyzer:
             ---
         """
 
-        if 'nota_fiscal_id' in self.df.columns:
+        if 'chave_anonimizada' in self.df.columns:
+
+            result = (
+
+                self.df[
+                    'chave_anonimizada'
+                ]
+
+                .dropna()
+
+                .nunique()
+            )
+
+        elif 'nota_fiscal_id' in self.df.columns:
 
             result = (
 
                 self.df[
                     'nota_fiscal_id'
                 ]
+
+                .dropna()
 
                 .nunique()
             )
@@ -108,10 +124,11 @@ class SummaryAnalyzer:
             result = len(self.df)
 
         self.logger.info(
-            'Quantidade de notas calculada'
+            f'Quantidade de notas calculada: {result}'
         )
 
-        return result
+        return int(result)
+
 
     def avg_ticket(
         self

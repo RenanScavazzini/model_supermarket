@@ -29,32 +29,32 @@ def produtos_unicos(df):
         Copyright (c) 2026 Renan Douglas Floriano Scavazzini
     """
     print('Antes da transformação:')
-    print(f"Há \033[93m{df['COD_PRODUTO'].nunique()}\033[0m código(s) de produto(s) distinto(s).")
-    print(f"Há \033[93m{df['PRODUTO'].nunique()}\033[0m nome(s) de produto(s) distinto(s).")
+    print(f"Há \033[93m{df['cod_produto'].nunique()}\033[0m código(s) de produto(s) distinto(s).")
+    print(f"Há \033[93m{df['produto'].nunique()}\033[0m nome(s) de produto(s) distinto(s).")
     print('\n')
 
-    df = df.sort_values(by=["PRODUTO", "COD_PRODUTO", "DATA"])
+    df = df.sort_values(by=["produto", "cod_produto", "data_hora"])
 
-    maior_codigo_produto = df.groupby("PRODUTO")["COD_PRODUTO"].max()
-    df["COD_PRODUTO"] = df["PRODUTO"].map(maior_codigo_produto)
+    maior_codigo_produto = df.groupby("produto")["cod_produto"].max()
+    df["cod_produto"] = df["produto"].map(maior_codigo_produto)
 
     produto_mais_recente = (
-        df.drop_duplicates(subset="COD_PRODUTO", keep="last")
-        .set_index("COD_PRODUTO")["PRODUTO"]
+        df.drop_duplicates(subset="cod_produto", keep="last")
+        .set_index("cod_produto")["produto"]
     )
 
-    df["PRODUTO"] = df["COD_PRODUTO"].map(produto_mais_recente)
+    df["produto"] = df["cod_produto"].map(produto_mais_recente)
 
     print('Após a transformação:')
-    print(f"Há \033[93m{df['COD_PRODUTO'].nunique()}\033[0m código(s) de produto(s) distinto(s).")
-    print(f"Há \033[93m{df['PRODUTO'].nunique()}\033[0m nome(s) de produto(s) distinto(s).")
+    print(f"Há \033[93m{df['cod_produto'].nunique()}\033[0m código(s) de produto(s) distinto(s).")
+    print(f"Há \033[93m{df['produto'].nunique()}\033[0m nome(s) de produto(s) distinto(s).")
 
-    df_aux1 = df.groupby("COD_PRODUTO").filter(
-        lambda x: x["PRODUTO"].nunique() > 1
+    df_aux1 = df.groupby("cod_produto").filter(
+        lambda x: x["produto"].nunique() > 1
     )
 
     print(
-        f"Há \033[93m{df_aux1['COD_PRODUTO'].nunique()}\033[0m código(s) "
+        f"Há \033[93m{df_aux1['cod_produto'].nunique()}\033[0m código(s) "
         "de produto(s) com nomes diferentes"
     )
 
@@ -90,8 +90,8 @@ def resumo_valores_gerais(df):
     """
     print('\033[93mResumos gerais:\033[0m')
 
-    total_gastos = df["VALOR_TOTAL_PRODUTO"].sum()
-    idas = df["CHAVE_ANONIMIZADA"].nunique()
+    total_gastos = df["valor_total_nota"].sum()
+    idas = df["chave_anonimizada"].nunique()
     media_gastos = total_gastos / idas
 
     print(f"Total de gastos: R$ {round(total_gastos, 2)}")
@@ -135,7 +135,7 @@ def resumo_valores_lugar_periodo(df):
     print('\n\033[93mResumo por supermercado:\033[0m')
 
     total_por_supermercado = (
-        df.groupby("SUPERMERCADO")["VALOR_TOTAL_PRODUTO"].sum()
+        df.groupby("supermercado")["valor_total_nota"].sum()
     )
 
     print(total_por_supermercado)
@@ -143,7 +143,7 @@ def resumo_valores_lugar_periodo(df):
     print('\n\033[93mResumo por período:\033[0m')
 
     total_por_periodo = (
-        df.groupby("PERIODO")["VALOR_TOTAL_PRODUTO"].sum()
+        df.groupby("periodo_dia")["valor_total_nota"].sum()
     )
 
     print(total_por_periodo)
@@ -181,8 +181,8 @@ def resumo_valores_ano_mes(df):
     print('\n\033[93mResumo por ano:\033[0m')
 
     total_por_ano = (
-        df.groupby(pd.to_datetime(df["DATA"]).dt.year)
-        ["VALOR_TOTAL_PRODUTO"]
+        df.groupby(pd.to_datetime(df["data_hora"]).dt.year)
+        ["valor_total_nota"]
         .sum()
     )
     print(total_por_ano)
@@ -190,8 +190,8 @@ def resumo_valores_ano_mes(df):
     print('\n\033[93mResumo por mês:\033[0m')
 
     total_por_mes = (
-        df.groupby(pd.to_datetime(df["DATA"]).dt.to_period("M"))
-        ["VALOR_TOTAL_PRODUTO"]
+        df.groupby(pd.to_datetime(df["data_hora"]).dt.to_period("M"))
+        ["valor_total_nota"]
         .sum()
     )
 
@@ -230,7 +230,7 @@ def resumo_produto_mais_comprado(df):
     """
     print('\n\033[93mResumo do produto mais comprado:\033[0m')
 
-    soma_quantidade = df.groupby("PRODUTO")["QTDE"].sum()
+    soma_quantidade = df.groupby("produto")["quantidade"].sum()
 
     produto_mais_comprado = soma_quantidade.idxmax()
 
@@ -243,7 +243,7 @@ def exibe_subtabela_cod_produto(df, cod_produto):
     """
     Descrição:
         Exibe a subtabela de um produto específico a partir
-        do código do produto (COD_PRODUTO).
+        do código do produto (cod_produto).
 
     Parâmetros:
         df (pd.DataFrame): DataFrame contendo os dados.
@@ -267,10 +267,10 @@ def exibe_subtabela_cod_produto(df, cod_produto):
     """
 
     subtabela = (
-        df.loc[df["COD_PRODUTO"] == cod_produto,
-               ["COD_PRODUTO", "PRODUTO", "VALOR_PRODUTO", "DATA"]]
+        df.loc[df["cod_produto"] == cod_produto,
+               ["cod_produto", "produto", "preco_unitario", "data_hora"]]
         .drop_duplicates()
-        .sort_values("DATA")
+        .sort_values("data_hora")
     )
 
     return subtabela
@@ -305,18 +305,18 @@ def exibe_subtabela_nome_produto(df, nome_produto):
         Copyright (c) 2026 Renan Douglas Floriano Scavazzini
     """
     df_unitario = (
-        df[["PRODUTO", "COD_PRODUTO", "VALOR_PRODUTO", "DATA"]]
+        df[["produto", "cod_produto", "preco_unitario", "data_hora"]]
         .drop_duplicates()
     )
 
-    df_unitario = df_unitario.sort_values(["PRODUTO", "DATA"])
+    df_unitario = df_unitario.sort_values(["produto", "data_hora"])
 
-    produtos = df_unitario["PRODUTO"].unique()
+    produtos = df_unitario["produto"].unique()
 
     subtabelas = {
         produto: df_unitario[
-            df_unitario["PRODUTO"] == produto
-        ].sort_values("DATA")
+            df_unitario["produto"] == produto
+        ].sort_values("data_hora")
         for produto in produtos
     }
 
