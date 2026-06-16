@@ -13,3 +13,6 @@ holidays>=0.48
 requests>=2.0
 pyarrow>=15.0
 mlxtend>=0.20
+nfceget>=0.1.0
+bs4>=0.0.1
+openpyxl>=3.1.2
