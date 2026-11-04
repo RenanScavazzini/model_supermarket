@@ -61,6 +61,10 @@ def produtos_unicos(df):
     return df
 
 
+def _notas_fiscais_unicas(df):
+    return df.drop_duplicates(subset="chave_anonimizada")
+
+
 def resumo_valores_gerais(df):
     """
     Descrição:
@@ -90,8 +94,9 @@ def resumo_valores_gerais(df):
     """
     print('\033[93mResumos gerais:\033[0m')
 
-    total_gastos = df["valor_total_nota"].sum()
-    idas = df["chave_anonimizada"].nunique()
+    notas = _notas_fiscais_unicas(df)
+    total_gastos = notas["valor_total_nota"].sum()
+    idas = notas["chave_anonimizada"].nunique()
     media_gastos = total_gastos / idas
 
     print(f"Total de gastos: R$ {round(total_gastos, 2)}")
@@ -134,8 +139,10 @@ def resumo_valores_lugar_periodo(df):
     """
     print('\n\033[93mResumo por supermercado:\033[0m')
 
+    notas = _notas_fiscais_unicas(df)
+
     total_por_supermercado = (
-        df.groupby("supermercado")["valor_total_nota"].sum()
+        notas.groupby("supermercado")["valor_total_nota"].sum()
     )
 
     print(total_por_supermercado)
@@ -143,7 +150,7 @@ def resumo_valores_lugar_periodo(df):
     print('\n\033[93mResumo por período:\033[0m')
 
     total_por_periodo = (
-        df.groupby("periodo_dia")["valor_total_nota"].sum()
+        notas.groupby("periodo_dia")["valor_total_nota"].sum()
     )
 
     print(total_por_periodo)
@@ -180,8 +187,10 @@ def resumo_valores_ano_mes(df):
     """
     print('\n\033[93mResumo por ano:\033[0m')
 
+    notas = _notas_fiscais_unicas(df)
+
     total_por_ano = (
-        df.groupby(pd.to_datetime(df["data_hora"]).dt.year)
+        notas.groupby(pd.to_datetime(notas["data_hora"]).dt.year)
         ["valor_total_nota"]
         .sum()
     )
@@ -190,7 +199,7 @@ def resumo_valores_ano_mes(df):
     print('\n\033[93mResumo por mês:\033[0m')
 
     total_por_mes = (
-        df.groupby(pd.to_datetime(df["data_hora"]).dt.to_period("M"))
+        notas.groupby(pd.to_datetime(notas["data_hora"]).dt.to_period("M"))
         ["valor_total_nota"]
         .sum()
     )
