@@ -4863,3 +4863,35 @@
 2026-11-04 00:30:02,114 | InvoiceLoader | INFO | Normalização concluída com sucesso
 2026-11-04 00:30:02,132 | src.dashboard.views.products | INFO | Renderizando página Products
 2026-11-04 00:30:02,803 | src.dashboard.views.products | INFO | Página Products renderizada com sucesso
+2026-11-17 01:13:20,927 | src.core.model | INFO | Iniciando análise exploratória da base
+2026-11-17 01:13:21,053 | src.core.model | INFO | Análise exploratória concluída
+2026-11-17 01:13:21,317 | src.core.model | INFO | Iniciando feature engineering
+2026-11-17 01:13:21,329 | src.core.model | INFO | Criando features temporais
+2026-11-17 01:13:21,346 | src.core.model | INFO | Criando features financeiras
+2026-11-17 01:13:21,352 | src.core.model | INFO | Criando features de frequência
+2026-11-17 01:13:21,364 | src.core.model | INFO | Criando features de preço
+2026-11-17 01:13:21,373 | src.core.model | INFO | Criando features por nota fiscal
+2026-11-17 01:13:21,383 | src.core.model | INFO | Criando features climáticas
+2026-11-17 01:13:21,386 | src.core.model | INFO | Criando variáveis normalizadas
+2026-11-17 01:13:21,397 | src.core.model | INFO | Criando features textuais
+2026-11-17 01:13:21,421 | src.core.model | INFO | Criando flags analíticas
+2026-11-17 01:13:21,430 | src.core.model | INFO | Feature engineering concluído | Novas colunas: 31
+2026-11-17 01:13:21,719 | src.core.model | INFO | Iniciando Market Basket Analysis
+2026-11-17 01:13:21,734 | src.core.model | INFO | Realizando limpeza dos dados
+2026-11-17 01:13:21,740 | src.core.model | INFO | Selecionando produtos mais relevantes
+2026-11-17 01:13:21,751 | src.core.model | INFO | Construindo basket matrix
+2026-11-17 01:13:21,761 | src.core.model | INFO | Executando FP-Growth
+2026-11-17 01:13:22,185 | src.core.model | INFO | Gerando regras de associação
+2026-11-17 01:13:22,986 | src.core.model | INFO | Calculando frequência dos produtos
+2026-11-17 01:13:22,990 | src.core.model | INFO | Calculando métricas resumidas
+2026-11-17 01:13:22,996 | src.core.model | INFO | Market Basket Analysis concluído
+2026-11-17 01:13:52,654 | InvoiceLoader | INFO | Carregando arquivo: data/notas_fiscais_supermercado.xlsx
+2026-11-17 01:13:55,464 | InvoiceLoader | INFO | DataFrame carregado com 4120 linhas e 25 colunas
+2026-11-17 01:13:55,493 | InvoiceLoader | INFO | Normalização concluída com sucesso
+2026-11-17 01:13:55,547 | src.dashboard.views.overview | INFO | Renderizando página Overview
+2026-11-17 01:13:55,638 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-11-17 01:13:55,640 | SummaryAnalyzer | INFO | Quantidade de notas calculada: 279
+2026-11-17 01:13:55,643 | SummaryAnalyzer | INFO | Quantidade de notas calculada: 279
+2026-11-17 01:13:55,646 | SummaryAnalyzer | INFO | Total gasto calculado
+2026-11-17 01:13:55,648 | SummaryAnalyzer | INFO | Ticket médio calculado
+2026-11-17 01:13:57,049 | src.dashboard.views.overview | INFO | Página Overview renderizada com sucesso
